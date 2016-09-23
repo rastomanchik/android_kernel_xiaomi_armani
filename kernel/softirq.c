@@ -25,7 +25,6 @@
 #include <linux/smp.h>
 #include <linux/tick.h>
 
-#define CREATE_TRACE_POINTS
 #include <trace/events/irq.h>
 
 #include <asm/irq.h>
@@ -90,39 +89,11 @@ static void wakeup_softirqd(void)
  * This one is for softirq.c-internal use,
  * where hardirqs are disabled legitimately:
  */
-#ifdef CONFIG_TRACE_IRQFLAGS
-static void __local_bh_disable(unsigned long ip, unsigned int cnt)
-{
-	unsigned long flags;
-
-	WARN_ON_ONCE(in_irq());
-
-	raw_local_irq_save(flags);
-	/*
-	 * The preempt tracer hooks into add_preempt_count and will break
-	 * lockdep because it calls back into lockdep after SOFTIRQ_OFFSET
-	 * is set and before current->softirq_enabled is cleared.
-	 * We must manually increment preempt_count here and manually
-	 * call the trace_preempt_off later.
-	 */
-	preempt_count() += cnt;
-	/*
-	 * Were softirqs turned off above:
-	 */
-	if (softirq_count() == cnt)
-		trace_softirqs_off(ip);
-	raw_local_irq_restore(flags);
-
-	if (preempt_count() == cnt)
-		trace_preempt_off(CALLER_ADDR0, get_parent_ip(CALLER_ADDR1));
-}
-#else /* !CONFIG_TRACE_IRQFLAGS */
 static inline void __local_bh_disable(unsigned long ip, unsigned int cnt)
 {
 	add_preempt_count(cnt);
 	barrier();
 }
-#endif /* CONFIG_TRACE_IRQFLAGS */
 
 void local_bh_disable(void)
 {
@@ -138,7 +109,6 @@ static void __local_bh_enable(unsigned int cnt)
 	WARN_ON_ONCE(!irqs_disabled());
 
 	if (softirq_count() == cnt)
-		trace_softirqs_on((unsigned long)__builtin_return_address(0));
 	sub_preempt_count(cnt);
 }
 
@@ -157,14 +127,10 @@ EXPORT_SYMBOL(_local_bh_enable);
 static inline void _local_bh_enable_ip(unsigned long ip)
 {
 	WARN_ON_ONCE(in_irq() || irqs_disabled());
-#ifdef CONFIG_TRACE_IRQFLAGS
-	local_irq_disable();
-#endif
 	/*
 	 * Are softirqs going to be turned on now:
 	 */
 	if (softirq_count() == SOFTIRQ_DISABLE_OFFSET)
-		trace_softirqs_on(ip);
 	/*
 	 * Keep preemption disabled until we are done with
 	 * softirq processing:
@@ -175,9 +141,6 @@ static inline void _local_bh_enable_ip(unsigned long ip)
 		do_softirq();
 
 	dec_preempt_count();
-#ifdef CONFIG_TRACE_IRQFLAGS
-	local_irq_enable();
-#endif
 	preempt_check_resched();
 }
 
@@ -234,9 +197,7 @@ restart:
 
 			kstat_incr_softirqs_this_cpu(vec_nr);
 
-			trace_softirq_entry(vec_nr);
 			h->action(h);
-			trace_softirq_exit(vec_nr);
 			if (unlikely(prev_count != preempt_count())) {
 				printk(KERN_ERR "huh, entered softirq %u %s %p"
 				       "with preempt_count %08x,"
@@ -332,7 +293,6 @@ static inline void invoke_softirq(void)
 void irq_exit(void)
 {
 	account_system_vtime(current);
-	trace_hardirq_exit();
 	sub_preempt_count(IRQ_EXIT_OFFSET);
 	if (!in_interrupt() && local_softirq_pending())
 		invoke_softirq();
@@ -377,7 +337,6 @@ void raise_softirq(unsigned int nr)
 
 void __raise_softirq_irqoff(unsigned int nr)
 {
-	trace_softirq_raise(nr);
 	or_softirq_pending(1UL << nr);
 }
 

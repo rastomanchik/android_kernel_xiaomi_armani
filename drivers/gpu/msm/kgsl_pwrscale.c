@@ -17,7 +17,6 @@
 #include "kgsl.h"
 #include "kgsl_pwrscale.h"
 #include "kgsl_device.h"
-#include "kgsl_trace.h"
 
 #define FAST_BUS 1
 #define SLOW_BUS -1
@@ -299,7 +298,6 @@ int kgsl_devfreq_get_dev_status(struct device *dev,
 		b->mod = device->pwrctrl.bus_mod;
 	}
 
-	trace_kgsl_pwrstats(device, stat->total_time, &pwrscale->accum_stats);
 	memset(&pwrscale->accum_stats, 0, sizeof(pwrscale->accum_stats));
 
 	kgsl_mutex_unlock(&device->mutex, &device->mutex_owner);

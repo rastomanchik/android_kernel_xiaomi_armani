@@ -18,7 +18,6 @@
 #include "kgsl.h"
 #include "kgsl_sharedmem.h"
 #include "adreno.h"
-#include "adreno_trace.h"
 
 #define KGSL_INIT_REFTIMESTAMP		0x7FFFFFFF
 
@@ -258,8 +257,6 @@ int adreno_drawctxt_wait(struct adreno_device *adreno_dev,
 	/* Needs to hold the device mutex */
 	BUG_ON(!mutex_is_locked(&device->mutex));
 
-	trace_adreno_drawctxt_wait_start(context->id, timestamp);
-
 	ret = kgsl_add_event(device, &context->events, timestamp,
 		wait_callback, (void *) drawctxt);
 	if (ret)
@@ -307,7 +304,6 @@ int adreno_drawctxt_wait(struct adreno_device *adreno_dev,
 		ret = -EINVAL;
 
 done:
-	trace_adreno_drawctxt_wait_done(context->id, timestamp, ret);
 	return ret;
 }
 static void global_wait_callback(struct kgsl_device *device,
@@ -354,8 +350,6 @@ int adreno_drawctxt_wait_global(struct adreno_device *adreno_dev,
 		goto done;
 	}
 
-	trace_adreno_drawctxt_wait_start(KGSL_MEMSTORE_GLOBAL, timestamp);
-
 	ret = kgsl_add_event(device, &device->global_events, timestamp,
 		global_wait_callback, (void *) drawctxt);
 	if (ret) {
@@ -382,7 +376,6 @@ int adreno_drawctxt_wait_global(struct adreno_device *adreno_dev,
 			timestamp);
 
 done:
-	trace_adreno_drawctxt_wait_done(KGSL_MEMSTORE_GLOBAL, timestamp, ret);
 	return ret;
 }
 
@@ -398,8 +391,6 @@ void adreno_drawctxt_invalidate(struct kgsl_device *device,
 		struct kgsl_context *context)
 {
 	struct adreno_context *drawctxt = ADRENO_CONTEXT(context);
-
-	trace_adreno_drawctxt_invalidate(drawctxt);
 
 	spin_lock(&drawctxt->lock);
 	drawctxt->state = ADRENO_CONTEXT_STATE_INVALID;
@@ -766,9 +757,6 @@ int adreno_drawctxt_switch(struct adreno_device *adreno_dev,
 							 drawctxt);
 		return ret;
 	}
-
-	trace_adreno_drawctxt_switch(adreno_dev->drawctxt_active,
-		drawctxt, flags);
 
 	if (adreno_dev->drawctxt_active) {
 		ret = context_save(adreno_dev, adreno_dev->drawctxt_active);

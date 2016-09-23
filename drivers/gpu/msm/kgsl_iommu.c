@@ -31,7 +31,6 @@
 #include "kgsl_iommu.h"
 #include "adreno_pm4types.h"
 #include "adreno.h"
-#include "kgsl_trace.h"
 #include "z180.h"
 #include "kgsl_cffdump.h"
 
@@ -418,10 +417,6 @@ static int kgsl_iommu_fault_handler(struct iommu_domain *domain,
 			KGSL_LOG_DUMP(iommu_dev->kgsldev, "*EMPTY*\n");
 
 	}
-
-	trace_kgsl_mmu_pagefault(iommu_dev->kgsldev, addr,
-			kgsl_mmu_get_ptname_from_ptbase(mmu, ptbase),
-			write ? "write" : "read");
 
 	/*
 	 * We do not want the h/w to resume fetching data from an iommu unit

@@ -33,7 +33,6 @@
 
 #include "adreno.h"
 #include "adreno_pm4types.h"
-#include "adreno_trace.h"
 
 #include "a2xx_reg.h"
 #include "a3xx_reg.h"
@@ -3241,8 +3240,6 @@ static void adreno_regwrite(struct kgsl_device *device,
 
 	if (!in_interrupt())
 		kgsl_pre_hwaccess(device);
-
-	kgsl_trace_regwrite(device, offsetwords, value);
 
 	kgsl_cffdump_regwrite(device, offsetwords << 2, value);
 	reg = (unsigned int *)(device->reg_virt + (offsetwords << 2));

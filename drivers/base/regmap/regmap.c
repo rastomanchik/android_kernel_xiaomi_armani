@@ -16,7 +16,6 @@
 #include <linux/mutex.h>
 #include <linux/err.h>
 
-#define CREATE_TRACE_POINTS
 #include <trace/events/regmap.h>
 
 #include "internal.h"
@@ -435,9 +434,6 @@ static int _regmap_raw_write(struct regmap *map, unsigned int reg,
 
 	u8[0] |= map->write_flag_mask;
 
-	trace_regmap_hw_write_start(map->dev, reg,
-				    val_len / map->format.val_bytes);
-
 	/* If we're doing a single register write we can probably just
 	 * send the work_buf directly, otherwise try to do a gather
 	 * write.
@@ -469,9 +465,6 @@ static int _regmap_raw_write(struct regmap *map, unsigned int reg,
 		kfree(buf);
 	}
 
-	trace_regmap_hw_write_done(map->dev, reg,
-				   val_len / map->format.val_bytes);
-
 	return ret;
 }
 
@@ -491,17 +484,11 @@ int _regmap_write(struct regmap *map, unsigned int reg,
 		}
 	}
 
-	trace_regmap_reg_write(map->dev, reg, val);
-
 	if (map->format.format_write) {
 		map->format.format_write(map, reg, val);
 
-		trace_regmap_hw_write_start(map->dev, reg, 1);
-
 		ret = map->bus->write(map->dev, map->work_buf,
 				      map->format.buf_size);
-
-		trace_regmap_hw_write_done(map->dev, reg, 1);
 
 		return ret;
 	} else {
@@ -636,15 +623,9 @@ static int _regmap_raw_read(struct regmap *map, unsigned int reg, void *val,
 	 */
 	u8[0] |= map->read_flag_mask;
 
-	trace_regmap_hw_read_start(map->dev, reg,
-				   val_len / map->format.val_bytes);
-
 	ret = map->bus->read(map->dev, map->work_buf,
 			     map->format.reg_bytes + map->format.pad_bytes,
 			     val, val_len);
-
-	trace_regmap_hw_read_done(map->dev, reg,
-				  val_len / map->format.val_bytes);
 
 	return ret;
 }
@@ -669,7 +650,6 @@ static int _regmap_read(struct regmap *map, unsigned int reg,
 	ret = _regmap_raw_read(map, reg, map->work_buf, map->format.val_bytes);
 	if (ret == 0) {
 		*val = map->format.parse_val(map->work_buf);
-		trace_regmap_reg_read(map->dev, reg, *val);
 	}
 
 	return ret;
