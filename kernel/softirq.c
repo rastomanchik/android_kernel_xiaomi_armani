@@ -124,10 +124,6 @@ static inline void _local_bh_enable_ip(unsigned long ip)
 {
 	WARN_ON_ONCE(in_irq() || irqs_disabled());
 	/*
-	 * Are softirqs going to be turned on now:
-	 */
-	if (softirq_count() == SOFTIRQ_DISABLE_OFFSET)
-	/*
 	 * Keep preemption disabled until we are done with
 	 * softirq processing:
  	 */
