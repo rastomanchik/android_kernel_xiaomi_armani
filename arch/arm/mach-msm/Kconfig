@@ -1217,142 +1217,6 @@ choice
 		bool "6.2.20 + New ADSP"
 endchoice
 
-config MSM_HAS_DEBUG_UART_HS
-	bool
-	help
-	  Say Y here if high speed MSM UART is present.
-
-config MSM_HAS_DEBUG_UART_HS_V14
-	bool
-	select MSM_HAS_DEBUG_UART_HS
-	help
-	  Say Y here if high speed MSM UART v1.4 is present.
-
-config MSM_DEBUG_UART_PHYS
-	hex
-	default 0xA9A00000 if (ARCH_MSM7X27 || ARCH_QSD8X50) && DEBUG_MSM_UART1
-	default 0xACA00000 if ARCH_MSM7X30 && DEBUG_MSM_UART1
-	default 0x94000000 if ARCH_FSM9XXX && DEBUG_MSM_UART1
-	default 0xA9B00000 if (ARCH_MSM7X27 || ARCH_QSD8X50) && DEBUG_MSM_UART2
-	default 0xACB00000 if ARCH_MSM7X30 && DEBUG_MSM_UART2
-	default 0x94100000 if ARCH_FSM9XXX && DEBUG_MSM_UART2
-	default 0xA9C00000 if (ARCH_MSM7X27 || ARCH_QSD8X50) && DEBUG_MSM_UART3
-	default 0xACC00000 if ARCH_MSM7X30 && DEBUG_MSM_UART3
-
-choice
-	prompt "Debug UART"
-	depends on DEBUG_LL
-
-	config DEBUG_MSM_UART1
-		bool "Kernel low-level debugging messages via MSM UART1"
-		depends on ARCH_MSM7X27 || ARCH_MSM7X30 || ARCH_QSD8X50 || ARCH_FSM9XXX
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the first serial port on MSM devices.
-
-	config DEBUG_MSM_UART2
-		bool "Kernel low-level debugging messages via MSM UART2"
-		depends on ARCH_MSM7X27 || ARCH_MSM7X30 || ARCH_QSD8X50 || ARCH_FSM9XXX
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the second serial port on MSM devices.
-
-	config DEBUG_MSM_UART3
-		bool "Kernel low-level debugging messages via MSM UART3"
-		depends on ARCH_MSM7X27 || ARCH_MSM7X30 || ARCH_QSD8X50
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the third serial port on MSM devices.
-
-	config DEBUG_MSM8660_UART
-		bool "Kernel low-level debugging messages via MSM 8660 UART"
-		depends on ARCH_MSM8X60
-		select MSM_HAS_DEBUG_UART_HS
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the serial port on MSM 8660 devices.
-
-	config DEBUG_MSM8960_UART
-		bool "Kernel low-level debugging messages via MSM 8960 UART"
-		depends on ARCH_MSM8960 && DEBUG_LL
-		select MSM_HAS_DEBUG_UART_HS
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the serial port on MSM 8960 devices.
-
-	config DEBUG_MSM8930_UART
-		bool "Kernel low-level debugging messages via MSM 8930 UART"
-		depends on ARCH_MSM8930 && DEBUG_LL
-		select MSM_HAS_DEBUG_UART_HS
-		help
-		Say Y here if you want the debug print routines to direct
-		their output to the serial port on MSM 8930 devices.
-
-	config DEBUG_APQ8064_UART
-		bool "Kernel low-level debugging messages via APQ 8064 UART"
-		depends on ARCH_APQ8064 && DEBUG_LL
-		select MSM_HAS_DEBUG_UART_HS
-		help
-		Say Y here if you want the debug print routines to direct
-		their output to the serial port on APQ 8064 devices.
-
-	config DEBUG_MSM8974_UART
-		bool "Kernel low-level debugging messages via MSM 8974 UART"
-		depends on ARCH_MSM8974
-		select MSM_HAS_DEBUG_UART_HS_V14
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the serial port on MSM 8974 devices.
-
-	config DEBUG_MPQ8092_UART
-                bool "Kernel low-level debugging messages via MPQ8092 UART"
-                depends on ARCH_MPQ8092
-                select MSM_HAS_DEBUG_UART_HS_V14
-                help
-                  Say Y here if you want the debug print routines to direct
-                  their output to the serial port on MPQ8092 devices.
-
-	config DEBUG_APQ8084_UART
-                bool "Kernel low-level debugging messages via APQ8084 UART"
-                depends on ARCH_APQ8084
-                select MSM_HAS_DEBUG_UART_HS_V14
-                help
-                  Say Y here if you want the debug print routines to direct
-                  their output to the serial port on APQ8084 devices.
-
-	config DEBUG_MSM9625_UART
-                bool "Kernel low-level debugging messages via MSM9625 UART"
-                depends on ARCH_MSM9625
-                select MSM_HAS_DEBUG_UART_HS_V14
-                help
-                  Say Y here if you want the debug print routines to direct
-                  their output to the serial port on MSM9625 devices.
-
-	config DEBUG_FSM9900_UART
-		bool "Kernel low-level debugging messages via FSM9900 UART"
-		depends on ARCH_FSM9900
-		select MSM_HAS_DEBUG_UART_HS_V14
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the serial port on FSM9900 devices.
-
-	config DEBUG_MSMSAMARIUM_UART
-		bool "Kernel low-level debugging messages via MSM SAMARIUM UART"
-		depends on ARCH_MSMSAMARIUM
-		select MSM_HAS_DEBUG_UART_HS_V14
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the serial port on MSM SAMARIUM devices.
-
-	config DEBUG_MSM8226_UART
-		bool "Kernel low-level debugging messages via MSM 8226 UART"
-		depends on ARCH_MSM8226
-		select MSM_HAS_DEBUG_UART_HS_V14
-		help
-		  Say Y here if you want the debug print routines to direct
-		  their output to the serial port on MSM 8226 devices.
-endchoice
-
 choice
 	prompt "Default Timer"
 	default MSM7X00A_USE_GP_TIMER
@@ -1524,24 +1388,6 @@ config MSM_FIQ_SUPPORT
 	default y
 	bool "Enable installation of an FIQ handler."
 
-config MSM_SERIAL_DEBUGGER
-	select MSM_FIQ_SUPPORT
-	select KERNEL_DEBUGGER_CORE
-	default n
-	bool "FIQ Mode Serial Debugger"
-	help
-	  The FIQ serial debugger can accept commands even when the
-	  kernel is unresponsive due to being stuck with interrupts
-	  disabled.  Depends on the kernel debugger core in drivers/misc.
-
-config MSM_SERIAL_DEBUGGER_CONSOLE
-	depends on MSM_SERIAL_DEBUGGER
-	default n
-	bool "Console on FIQ Serial Debugger port"
-	help
-	  Enables a console so that printk messages are displayed on
-	  the debugger serial port as the occur.
-
 config MSM_PROC_COMM
 	default y
 	bool "Proc-Comm RPC Interface"
@@ -1579,14 +1425,6 @@ config MSM_PCIE
 	help
 	  Enables the PCIe functionality by configures PCIe core on
 	  MSM chipset and by enabling the ARM PCI framework extension.
-
-config MSM_SMD_DEBUG
-	depends on MSM_SMD
-	default y
-	bool "MSM SMD debug support"
-	help
-	  Support for debugging the SMD for communication
-	  between the ARM9 and ARM11
 
 config MSM_BAM_DMUX
 	bool "BAM Data Mux Driver"
@@ -1772,14 +1610,6 @@ config MSM_TEST_QMI_CLIENT
 	  a synchronous QMI request to the test_service and handles the
 	  QMI responses.
 
-config MSM_ONCRPCROUTER_DEBUG
-	depends on MSM_ONCRPCROUTER
-	default y
-	bool "MSM debug ONCRPC router support"
-	help
-	  Support for debugging the ONCRPC router for communication
-	  between the ARM9 and ARM11
-
 config MSM_RPC_LOOPBACK_XPRT
 	depends on MSM_ONCRPCROUTER
 	default n
@@ -1810,20 +1640,6 @@ config MSM_RPC_WATCHDOG
 	help
 	  The dog_keepalive client module.
 
-config MSM_RPC_PING
-	depends on MSM_ONCRPCROUTER && DEBUG_FS
-	default m
-	bool "MSM rpc ping"
-	help
-	  Implements MSM rpc ping test module.
-
-config MSM_RPC_PROC_COMM_TEST
-	depends on DEBUG_FS && MSM_PROC_COMM
-	default m
-	bool "MSM rpc proc comm test"
-	help
-	  Implements MSM rpc proc comm test module.
-
 config MSM_RPC_OEM_RAPI
 	depends on MSM_ONCRPCROUTER
 	default m
@@ -1844,13 +1660,6 @@ config MSM_DALRPC
 	default n
 	help
 	  Supports RPC calls to DAL devices on remote processor cores.
-
-config MSM_DALRPC_TEST
-	tristate "DAL RPC test module"
-	depends on (MSM_DALRPC && DEBUG_FS)
-	default m
-	help
-	  Exercises DAL RPC calls to QDSP6.
 
 if CPU_FREQ_MSM
 
@@ -2317,55 +2126,6 @@ config MSM_BUSPM_DEV
 	  allocate physical memory which is used by bus performance hardware to
 	  dump performance data.
 
-config MSM_TZ_LOG
-	tristate "MSM Trust Zone (TZ) Log Driver"
-	depends on DEBUG_FS
-	help
-	  This option enables a driver with a debugfs interface for messages
-	  produced by the Secure code (Trust zone). These messages provide
-	  diagnostic information about TZ operation.
-
-config MSM_RPM_LOG
-	tristate "MSM Resource Power Manager Log Driver"
-	depends on DEBUG_FS
-	depends on MSM_RPM || MSM_RPM_SMD
-	default n
-	help
-	  This option enables a driver which can read from a circular buffer
-	  of messages produced by the RPM. These messages provide diagnostic
-	  information about RPM operation. The driver outputs the messages
-	  via a debugfs node.
-
-config MSM_RPM_STATS_LOG
-	tristate "MSM Resource Power Manager Stat Driver"
-	depends on DEBUG_FS
-	depends on MSM_RPM || MSM_RPM_SMD
-	default n
-	  help
-	  This option enables a driver which reads RPM messages from a shared
-	  memory location. These messages provide statistical information about
-	  the low power modes that RPM enters. The drivers outputs the message
-	  via a debugfs node.
-
-config MSM_RPM_RBCPR_STATS_LOG
-        tristate "MSM Resource Power Manager RPBCPR Stat Driver"
-        depends on DEBUG_FS
-        depends on MSM_RPM
-          help
-          This option enables a driver which reads RPM messages from a shared
-          memory location. These messages provide statistical information about
-          RBCPR (Rapid Bridge Core Power Reduction) information . The drivers
-          outputs the message via a debugfs node.
-
-config MSM_RPM_RBCPR_STATS_V2_LOG
-        tristate "MSM Resource Power Manager RPBCPR Stat Driver"
-        depends on DEBUG_FS
-          help
-          This option enables v2 of the rpmrbcpr_stats driver which reads RPM
-          memory for statistics pertaining to RPM's RBCPR(Rapid Bridge Core
-          Power Reduction) driver. The drivers outputs the message via a
-          debugfs node.
-
 config MSM_DIRECT_SCLK_ACCESS
 	bool "Direct access to the SCLK timer"
 	default n
@@ -2518,15 +2278,6 @@ config MSM_SHOW_RESUME_IRQ
 		This option logs wake up interrupts that have triggered just before
 		the resume loop unrolls. Say Y if you want to debug why the system
 		resumed.
-
-config BT_MSM_PINTEST
-	tristate "MSM Bluetooth Pin Connectivity Test"
-	depends on ((ARCH_MSM8X60 || ARCH_MSM7X27A) && DEBUG_FS)
-        default n
-	help
-	  Bluetooth MSM Pin Connectivity test module.
-	  This driver provides support for verifying the MSM to BT pin
-	  connectivity.
 
 config MSM_FAKE_BATTERY
 		depends on POWER_SUPPLY
@@ -2683,43 +2434,6 @@ config MSM_OCMEM_LOCAL_POWER_CTRL
 	  OCMEM driver. By default power management is delegated to
 	  the RPM. Selecting this option causes the OCMEM driver to
 	  directly handle the various macro power transitions.
-
-config MSM_OCMEM_DEBUG
-	bool "OCMEM Debug Support"
-	depends on MSM_OCMEM
-	help
-	  Enable debug options for On-chip Memory (OCMEM) driver.
-	  Various debug options include memory, power and latency.
-	  Choosing one of these options allows debugging of each
-	  individual subsystem separately.
-
-config MSM_OCMEM_NONSECURE
-	bool "OCMEM Non Secure Mode"
-	depends on MSM_OCMEM_DEBUG
-	help
-	  Disable OCMEM interaction with secure processor.
-	  By default OCMEM is secured and accesses for each master
-	  is requested by the OCMEM driver. Selecting this option
-	  causes the OCMEM memory to be in non-secure state unless
-	  its locked down by the secure processor.
-
-config MSM_OCMEM_POWER_DEBUG
-	bool "OCMEM Power Debug Support"
-	depends on MSM_OCMEM_DEBUG
-	help
-	  Enable debug support for OCMEM power management.
-	  This adds support for verifying all power management
-	  related operations of OCMEM. Both local power management
-	  and RPM assisted power management operations are supported.
-
-config MSM_OCMEM_DEBUG_ALWAYS_ON
-	bool "Keep OCMEM always turned ON"
-	depends on MSM_OCMEM_DEBUG
-	help
-	  Always vote for all OCMEM clocks and keep all OCMEM
-	  macros turned ON and never allow them to be turned OFF.
-	  Both local power management and RPM assisted power modes
-	  are supported for individual macro power control operations.
 
 config MSM_OCMEM_POWER_DISABLE
 	bool "OCMEM Disable Power Control"
@@ -2910,15 +2624,6 @@ config MSM_HSIC_SYSMON
 	  over HSIC. This driver allows the local system monitor to
 	  communicate with the remote system monitor interface.
 
-config MSM_HSIC_SYSMON_TEST
-	tristate "MSM HSIC system monitor bridge test"
-	depends on USB && MSM_HSIC_SYSMON && DEBUG_FS
-	help
-	  Enable the test hook for the Qualcomm system monitor HSIC driver.
-	  This will create a debugfs file entry named "hsic_sysmon_test" which
-	  can be read and written to send character data to the sysmon port of
-	  the modem over USB.
-
 config MSM_RPC_PMIC
 	tristate "MSM RPC PMIC driver"
 	depends on MSM_ONCRPCROUTER
@@ -3061,11 +2766,3 @@ config XIAOMI_ARMANI_DTB
 	 get built during kernel compilation.
 
 endif
-
-config KERNEL_TEXT_MPU_PROT
-        bool "Enable xpu protection of kernel r/o sections"
-        help
-          Enables xpu protection of kernel code and read-only data
-          sections early in boot. Read access is permitted to
-          all masters; Write access is only permited to the
-          secure world.

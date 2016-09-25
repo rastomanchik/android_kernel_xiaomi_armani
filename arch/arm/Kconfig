@@ -2,7 +2,6 @@ config ARM
 	bool
 	default y
 	select HAVE_AOUT
-	select HAVE_DMA_API_DEBUG
 	select HAVE_IDE if PCI || ISA || PCMCIA
 	select HAVE_DMA_CONTIGUOUS if (CPU_V6 || CPU_V6K || CPU_V7)
 	select HAVE_DMA_ATTRS
@@ -2279,24 +2278,6 @@ config CPU_FREQ_S3C24XX_PLL
 	  This also means that the PLL tables for the selected CPU(s) will
 	  be built which may increase the size of the kernel image.
 
-config CPU_FREQ_S3C24XX_DEBUG
-	bool "Debug CPUfreq Samsung driver core"
-	depends on CPU_FREQ_S3C24XX
-	help
-	  Enable s3c_freq_dbg for the Samsung S3C CPUfreq core
-
-config CPU_FREQ_S3C24XX_IODEBUG
-	bool "Debug CPUfreq Samsung driver IO timing"
-	depends on CPU_FREQ_S3C24XX
-	help
-	  Enable s3c_freq_iodbg for the Samsung S3C CPUfreq core
-
-config CPU_FREQ_S3C24XX_DEBUGFS
-	bool "Export debugfs for CPUFreq"
-	depends on CPU_FREQ_S3C24XX && DEBUG_FS
-	help
-	  Export status information via debugfs.
-
 endif
 
 source "drivers/cpuidle/Kconfig"
@@ -2422,8 +2403,6 @@ source "net/Kconfig"
 source "drivers/Kconfig"
 
 source "fs/Kconfig"
-
-source "arch/arm/Kconfig.debug"
 
 source "security/Kconfig"
 

@@ -46,8 +46,6 @@
 #include <asm/uaccess.h>
 
 #include <mach/msm_rtb.h>
-#define CREATE_TRACE_POINTS
-#include <trace/events/printk.h>
 
 /*
  * Architectures can override it:
@@ -57,7 +55,7 @@ void asmlinkage __attribute__((weak)) early_printk(const char *fmt, ...)
 }
 
 /* printk's without a loglevel use this.. */
-#define DEFAULT_MESSAGE_LOGLEVEL CONFIG_DEFAULT_MESSAGE_LOGLEVEL
+#define DEFAULT_MESSAGE_LOGLEVEL 1
 
 /* We show everything that is MORE important than this.. */
 #define MINIMUM_CONSOLE_LOGLEVEL 1 /* Minimum loglevel we let people use */
@@ -1103,7 +1101,6 @@ MODULE_PARM_DESC(ignore_loglevel, "ignore loglevel setting, to"
 static void call_console_drivers(int level, const char *text, size_t len)
 {
 	struct console *con;
-	trace_console(text, 0, len, len);
 
 	if (level >= console_loglevel && !ignore_loglevel)
 		return;

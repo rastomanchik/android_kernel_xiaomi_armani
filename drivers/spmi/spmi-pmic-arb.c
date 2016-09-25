@@ -841,11 +841,6 @@ static int __devinit spmi_pmic_arb_probe(struct platform_device *pdev)
 	/* Register device(s) from the device tree */
 	of_spmi_register_devices(&pmic_arb->controller);
 
-	/* Add debugfs file for mapping data */
-	if (spmi_dfs_create_file(&pmic_arb->controller, "mapping",
-					pmic_arb, &pmic_arb_dfs_fops) == NULL)
-		dev_err(&pdev->dev, "error creating 'mapping' debugfs file\n");
-
 	pr_debug("PMIC Arb Version 0x%x\n",
 			pmic_arb_read(pmic_arb, PMIC_ARB_VERSION));
 
