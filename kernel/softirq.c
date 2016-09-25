@@ -21,11 +21,8 @@
 #include <linux/freezer.h>
 #include <linux/kthread.h>
 #include <linux/rcupdate.h>
-#include <linux/ftrace.h>
 #include <linux/smp.h>
 #include <linux/tick.h>
-
-#include <trace/events/irq.h>
 
 #include <asm/irq.h>
 /*
@@ -108,7 +105,6 @@ static void __local_bh_enable(unsigned int cnt)
 	WARN_ON_ONCE(in_irq());
 	WARN_ON_ONCE(!irqs_disabled());
 
-	if (softirq_count() == cnt)
 	sub_preempt_count(cnt);
 }
 
