@@ -4,16 +4,6 @@ SUBLEVEL = 0
 EXTRAVERSION =
 NAME = Saber-toothed Squirrel
 
-# *DOCUMENTATION*
-# To see a list of typical targets execute "make help"
-# More info can be located in ./README
-# Comments in this file are targeted only to the developer, do not
-# expect to learn how to build the kernel reading this file.
-
-# Do not:
-# o  use make's built-in rules and variables
-#    (this increases performance and avoids hard-to-debug behaviour);
-# o  print "Entering directory ...";
 MAKEFLAGS += -rR --no-print-directory
 
 # Avoid funny character set dependencies
@@ -54,9 +44,6 @@ endif
 # Use 'make C=1' to enable checking of only re-compiled files.
 # Use 'make C=2' to enable checking of *all* source files, regardless
 # of whether they are re-compiled or not.
-#
-# See the file "Documentation/sparse.txt" for more details, including
-# where to get the "sparse" utility.
 
 ifeq ("$(origin C)", "command line")
   KBUILD_CHECKSRC = $(C)
@@ -165,11 +152,7 @@ export srctree objtree VPATH
 # then ARCH is assigned, getting whatever value it gets normally, and 
 # SUBARCH is subsequently ignored.
 
-SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
-				  -e s/arm.*/arm/ -e s/sa110/arm/ \
-				  -e s/s390x/s390/ -e s/parisc64/parisc/ \
-				  -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-				  -e s/sh[234].*/sh/ )
+SUBARCH := $(shell uname -m | sed -e s/arm.*/arm/  )
 
 # Cross compiling and selecting different set of gcc/bin-utils
 # ---------------------------------------------------------------------------
@@ -192,16 +175,12 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/ \
 # Default value for CROSS_COMPILE is not to prefix executables
 # Note: Some architectures assign CROSS_COMPILE in their arch/*/Makefile
 export KBUILD_BUILDHOST := $(SUBARCH)
-ARCH		?= $(SUBARCH)
+ARCH		?= arm
 CROSS_COMPILE	?= $(CONFIG_CROSS_COMPILE:"%"=%)
 
 # Architecture as present in compile.h
 UTS_MACHINE 	:= $(ARCH)
 SRCARCH 	:= $(ARCH)
-
-ifeq ($(ARCH),)
-        SRCARCH := arm
-endif
 
 hdr-arch  := $(SRCARCH)
 
@@ -417,7 +396,7 @@ asm-generic:
 # of make so .config is not included in this case either (for *config).
 
 no-dot-config-targets := clean mrproper distclean \
-			 cscope gtags TAGS tags help %docs check% coccicheck \
+			 cscope gtags TAGS tags help check% coccicheck \
 			 include/linux/version.h headers_% archheaders archscripts \
 			 kernelversion %src-pkg
 
@@ -727,8 +706,6 @@ libs-y		:= $(libs-y1) $(libs-y2)
 # Therefore this step is delayed until just before final link of vmlinux -
 # except in the kallsyms case where it is done just before adding the
 # symbols to the kernel.
-#
-# System.map is generated to document addresses of all kernel symbols
 
 vmlinux-init := $(head-y) $(init-y)
 vmlinux-main := $(core-y) $(libs-y) $(drivers-y) $(net-y)
@@ -890,9 +867,6 @@ ifdef CONFIG_HEADERS_CHECK
 endif
 ifdef CONFIG_SAMPLES
 	$(Q)$(MAKE) $(build)=samples
-endif
-ifdef CONFIG_BUILD_DOCSRC
-	$(Q)$(MAKE) $(build)=Documentation
 endif
 	$(call vmlinux-modpost)
 	$(call if_changed_rule,vmlinux__)
@@ -1150,7 +1124,7 @@ MRPROPER_FILES += .config .config.old .version .old_version             \
 #
 clean: rm-dirs  := $(CLEAN_DIRS)
 clean: rm-files := $(CLEAN_FILES)
-clean-dirs      := $(addprefix _clean_, . $(vmlinux-alldirs) Documentation samples)
+clean-dirs      := $(addprefix _clean_, . $(vmlinux-alldirs) samples)
 
 PHONY += $(clean-dirs) clean archclean
 $(clean-dirs):
@@ -1162,7 +1136,7 @@ clean: archclean
 #
 mrproper: rm-dirs  := $(wildcard $(MRPROPER_DIRS))
 mrproper: rm-files := $(wildcard $(MRPROPER_FILES))
-mrproper-dirs      := $(addprefix _mrproper_,Documentation/DocBook scripts)
+mrproper-dirs      := $(addprefix _mrproper_, scripts)
 
 PHONY += $(mrproper-dirs) mrproper archmrproper
 $(mrproper-dirs):
@@ -1197,9 +1171,6 @@ package-dir	:= $(srctree)/scripts/package
 rpm: include/config/kernel.release FORCE
 	$(Q)$(MAKE) $(build)=$(package-dir) $@
 
-
-# Brief documentation of the typical targets used
-# ---------------------------------------------------------------------------
 
 boards := $(wildcard $(srctree)/arch/$(SRCARCH)/configs/*_defconfig)
 boards := $(notdir $(boards))
@@ -1250,9 +1221,6 @@ help:
 	@echo  'Kernel packaging:'
 	@$(MAKE) $(build)=$(package-dir) help
 	@echo  ''
-	@echo  'Documentation targets:'
-	@$(MAKE) -f $(srctree)/Documentation/DocBook/Makefile dochelp
-	@echo  ''
 	@echo  'Architecture specific targets ($(SRCARCH)):'
 	@$(if $(archhelp),$(archhelp),\
 		echo '  No architecture specific help defined for $(SRCARCH)')
@@ -1295,13 +1263,6 @@ $(help-board-dirs): help-%:
 		$(foreach b, $(boards-per-dir), \
 		printf "  %-24s - Build for %s\\n" $*/$(b) $(subst _defconfig,,$(b));) \
 		echo '')
-
-
-# Documentation targets
-# ---------------------------------------------------------------------------
-%docs: scripts_basic FORCE
-	$(Q)$(MAKE) $(build)=scripts build_docproc
-	$(Q)$(MAKE) $(build)=Documentation/DocBook $@
 
 else # KBUILD_EXTMOD
 

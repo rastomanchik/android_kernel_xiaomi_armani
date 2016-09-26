@@ -13,18 +13,11 @@ omap2cam-objs	:=	omap24xxcam.o omap24xxcam-dma.o
 videodev-objs	:=	v4l2-dev.o v4l2-ioctl.o v4l2-device.o v4l2-fh.o \
 			v4l2-event.o v4l2-ctrls.o v4l2-subdev.o
 
-ifeq ($(CONFIG_COMPAT),y)
-  videodev-objs += v4l2-compat-ioctl32.o
-endif
-
 # V4L2 core modules
 
 obj-$(CONFIG_VIDEO_DEV) += videodev.o v4l2-int-device.o
 obj-$(CONFIG_VIDEO_V4L2_COMMON) += v4l2-common.o
 
-# Helper modules
-
-obj-$(CONFIG_VIDEO_APTINA_PLL) += aptina-pll.o
 
 # All i2c modules must come first:
 
@@ -167,7 +160,6 @@ obj-$(CONFIG_VIDEO_CX18) += cx18/
 
 obj-$(CONFIG_VIDEO_VIU) += fsl-viu.o
 obj-$(CONFIG_VIDEO_VIVI) += vivi.o
-obj-$(CONFIG_VIDEO_MEM2MEM_TESTDEV) += mem2mem_testdev.o
 obj-$(CONFIG_VIDEO_CX23885) += cx23885/
 
 obj-$(CONFIG_VIDEO_AK881X)		+= ak881x.o
@@ -196,8 +188,6 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
 
 obj-$(CONFIG_BLACKFIN)                  += blackfin/
 
-obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
-
 obj-$(CONFIG_VIDEO_SH_VOU)		+= sh_vou.o
 
 obj-$(CONFIG_VIDEO_AU0828) += au0828/
@@ -206,10 +196,6 @@ obj-$(CONFIG_USB_VIDEO_CLASS)	+= uvc/
 obj-$(CONFIG_VIDEO_SAA7164)     += saa7164/
 
 obj-$(CONFIG_VIDEO_IR_I2C)  += ir-kbd-i2c.o
-
-obj-y	+= davinci/
-
-obj-$(CONFIG_ARCH_OMAP)	+= omap/
 
 ccflags-y += -I$(srctree)/drivers/media/dvb/dvb-core
 ccflags-y += -I$(srctree)/drivers/media/dvb/frontends
