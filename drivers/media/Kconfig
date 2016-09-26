@@ -122,10 +122,4 @@ source "drivers/media/video/Kconfig"
 
 source "drivers/media/radio/Kconfig"
 
-#
-# DVB adapters
-#
-
-source "drivers/media/dvb/Kconfig"
-
 endif # MEDIA_SUPPORT

@@ -217,8 +217,6 @@ config USB_NET_RNDIS_WLAN
 
 	  If you choose to build a module, it'll be called rndis_wlan.
 
-source "drivers/net/wireless/rtl818x/Kconfig"
-
 config ADM8211
 	tristate "ADMtek ADM8211 support"
 	depends on MAC80211 && PCI && EXPERIMENTAL
@@ -323,25 +321,5 @@ config WCNSS_REGISTER_DUMP_ON_BITE
 	 properly clocked in some WCNSS bite cases, and that may cause unclocked
 	 register access failures. So this feature is to enable/disable the
 	 register dump on WCNSS WDOG bite.
-
-source "drivers/net/wireless/ath/Kconfig"
-source "drivers/net/wireless/b43/Kconfig"
-source "drivers/net/wireless/b43legacy/Kconfig"
-source "drivers/net/wireless/bcmdhd/Kconfig"
-source "drivers/net/wireless/brcm80211/Kconfig"
-source "drivers/net/wireless/hostap/Kconfig"
-source "drivers/net/wireless/ipw2x00/Kconfig"
-source "drivers/net/wireless/iwlwifi/Kconfig"
-source "drivers/net/wireless/iwlegacy/Kconfig"
-source "drivers/net/wireless/iwmc3200wifi/Kconfig"
-source "drivers/net/wireless/libertas/Kconfig"
-source "drivers/net/wireless/orinoco/Kconfig"
-source "drivers/net/wireless/p54/Kconfig"
-source "drivers/net/wireless/rt2x00/Kconfig"
-source "drivers/net/wireless/rtlwifi/Kconfig"
-source "drivers/net/wireless/wl1251/Kconfig"
-source "drivers/net/wireless/wl12xx/Kconfig"
-source "drivers/net/wireless/zd1211rw/Kconfig"
-source "drivers/net/wireless/mwifiex/Kconfig"
 
 endif # WLAN
