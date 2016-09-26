@@ -48,7 +48,6 @@ menu "Networking options"
 source "net/packet/Kconfig"
 source "net/unix/Kconfig"
 source "net/xfrm/Kconfig"
-source "net/iucv/Kconfig"
 
 config INET
 	bool "TCP/IP networking"
@@ -75,7 +74,6 @@ config INET
 if INET
 source "net/ipv4/Kconfig"
 source "net/ipv6/Kconfig"
-source "net/netlabel/Kconfig"
 
 endif # if INET
 
@@ -200,36 +198,14 @@ config BRIDGE_NETFILTER
 source "net/netfilter/Kconfig"
 source "net/ipv4/netfilter/Kconfig"
 source "net/ipv6/netfilter/Kconfig"
-source "net/decnet/netfilter/Kconfig"
 source "net/bridge/netfilter/Kconfig"
 
 endif
 
-source "net/dccp/Kconfig"
-source "net/sctp/Kconfig"
-source "net/rds/Kconfig"
-source "net/tipc/Kconfig"
-source "net/atm/Kconfig"
-source "net/l2tp/Kconfig"
 source "net/802/Kconfig"
 source "net/bridge/Kconfig"
-source "net/dsa/Kconfig"
-source "net/8021q/Kconfig"
-source "net/decnet/Kconfig"
 source "net/llc/Kconfig"
-source "net/ipx/Kconfig"
-source "drivers/net/appletalk/Kconfig"
-source "net/x25/Kconfig"
-source "net/lapb/Kconfig"
-source "net/econet/Kconfig"
-source "net/wanrouter/Kconfig"
-source "net/phonet/Kconfig"
-source "net/ieee802154/Kconfig"
 source "net/sched/Kconfig"
-source "net/dcb/Kconfig"
-source "net/dns_resolver/Kconfig"
-source "net/batman-adv/Kconfig"
-source "net/openvswitch/Kconfig"
 
 config RPS
 	boolean "RPS"
@@ -332,11 +308,7 @@ endmenu
 
 endmenu
 
-source "net/ax25/Kconfig"
-source "net/can/Kconfig"
-source "net/irda/Kconfig"
 source "net/bluetooth/Kconfig"
-source "net/rxrpc/Kconfig"
 
 config FIB_RULES
 	bool
@@ -349,17 +321,7 @@ menuconfig WIRELESS
 if WIRELESS
 
 source "net/wireless/Kconfig"
-source "net/mac80211/Kconfig"
 
 endif # WIRELESS
-
-source "net/wimax/Kconfig"
-
-source "net/rfkill/Kconfig"
-source "net/9p/Kconfig"
-source "net/caif/Kconfig"
-source "net/ceph/Kconfig"
-source "net/nfc/Kconfig"
-
 
 endif   # if NET
