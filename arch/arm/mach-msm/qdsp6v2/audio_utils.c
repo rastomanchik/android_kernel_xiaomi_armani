@@ -175,6 +175,7 @@ int audio_in_buf_alloc(struct q6audio_in *audio)
 		}
 		break;
 	default:
+		break;
 	}
 
 	return rc;

@@ -56,7 +56,6 @@ void q6asm_in_cb(uint32_t opcode, uint32_t token,
 		wake_up(&audio->write_wait);
 		break;
 	default:
-			audio->ac->session, opcode);
 		break;
 	}
 	spin_unlock_irqrestore(&audio->dsp_lock, flags);
