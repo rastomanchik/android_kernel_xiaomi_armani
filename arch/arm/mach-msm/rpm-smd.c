@@ -36,10 +36,7 @@
 #include <mach/socinfo.h>
 #include <mach/msm_smd.h>
 #include <mach/rpm-smd.h>
-#define CREATE_TRACE_POINTS
-#include <mach/trace_rpm_smd.h>
 #include "rpm-notifier.h"
-/* Debug Definitions */
 
 enum {
 	MSM_RPM_LOG_REQUEST_PRETTY	= BIT(0),
@@ -413,11 +410,6 @@ static int msm_rpm_flush_requests(bool print)
 
 		WARN_ON(ret != get_buf_len(s->buf));
 
-		trace_rpm_send_message(true, MSM_RPM_CTX_SLEEP_SET,
-				get_rsc_type(s->buf),
-				get_rsc_id(s->buf),
-				get_msg_id(s->buf));
-
 		s->valid = false;
 	}
 	return 0;
@@ -765,12 +757,6 @@ static void msm_rpm_process_ack(uint32_t msg_id, int errno)
 		}
 		elem = NULL;
 	}
-	/* Special case where the sleep driver doesn't
-	 * wait for ACKs. This would decrease the latency involved with
-	 * entering RPM assisted power collapse.
-	 */
-	if (!elem)
-		trace_rpm_ack_recd(0, msg_id);
 
 	spin_unlock_irqrestore(&msm_rpm_list_lock, flags);
 }
@@ -1114,10 +1100,6 @@ static int msm_rpm_send_data(struct msm_rpm_request *cdata,
 	ret = msm_rpm_send_smd_buffer(&cdata->buf[0], msg_size, noirq);
 
 	if (ret == msg_size) {
-		trace_rpm_send_message(noirq, cdata->msg_hdr.set,
-				cdata->msg_hdr.resource_type,
-				cdata->msg_hdr.resource_id,
-				cdata->msg_hdr.msg_id);
 		for (i = 0; (i < cdata->write_idx); i++)
 			cdata->kvp[i].valid = false;
 		cdata->msg_hdr.data_len = 0;
@@ -1174,7 +1156,6 @@ int msm_rpm_wait_for_ack(uint32_t msg_id)
 		return rc;
 
 	wait_for_completion(&elem->ack);
-	trace_rpm_ack_recd(0, msg_id);
 
 	rc = elem->errno;
 	msm_rpm_free_list_entry(elem);
@@ -1230,7 +1211,6 @@ int msm_rpm_wait_for_ack_noirq(uint32_t msg_id)
 	}
 
 	rc = elem->errno;
-	trace_rpm_ack_recd(1, msg_id);
 
 	msm_rpm_free_list_entry(elem);
 wait_ack_cleanup:
