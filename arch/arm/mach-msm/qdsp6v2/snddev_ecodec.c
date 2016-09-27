@@ -56,7 +56,6 @@ static int aux_pcm_gpios_request(void)
 {
 	int rc = 0;
 
-	pr_debug("%s\n", __func__);
 	rc = gpio_request(the_aux_pcm_state.dout, "AUX PCM DOUT");
 	if (rc < 0) {
 		pr_err("%s: GPIO request for AUX PCM DOUT failed\n", __func__);
@@ -94,7 +93,6 @@ static int aux_pcm_gpios_request(void)
 
 static void aux_pcm_gpios_free(void)
 {
-	pr_debug("%s\n", __func__);
 	gpio_free(the_aux_pcm_state.dout);
 	gpio_free(the_aux_pcm_state.din);
 	gpio_free(the_aux_pcm_state.syncout);
@@ -167,8 +165,6 @@ static int snddev_ecodec_open(struct msm_snddev_info *dev_info)
 	struct snddev_ecodec_drv_state *drv = &snddev_ecodec_drv;
 	union afe_port_config afe_config;
 
-	pr_debug("%s\n", __func__);
-
 	mutex_lock(&drv->dev_lock);
 
 	if (dev_info->opened) {
@@ -179,13 +175,10 @@ static int snddev_ecodec_open(struct msm_snddev_info *dev_info)
 	}
 
 	if (drv->ref_cnt != 0) {
-		pr_debug("%s: opened %s\n", __func__, dev_info->name);
 		drv->ref_cnt++;
 		mutex_unlock(&drv->dev_lock);
 		return 0;
 	}
-
-	pr_info("%s: opening %s\n", __func__, dev_info->name);
 
 	rc = aux_pcm_gpios_request();
 	if (rc < 0) {
@@ -242,8 +235,6 @@ err_rx_afe:
 int snddev_ecodec_close(struct msm_snddev_info *dev_info)
 {
 	struct snddev_ecodec_drv_state *drv = &snddev_ecodec_drv;
-
-	pr_debug("%s: closing %s\n", __func__, dev_info->name);
 
 	mutex_lock(&drv->dev_lock);
 

@@ -42,10 +42,7 @@ static long amrnb_in_ioctl(struct file *file,
 	case AUDIO_START: {
 		struct msm_audio_amrnb_enc_config_v2 *enc_cfg;
 		enc_cfg = audio->enc_cfg;
-		pr_debug("%s:session id %d: default buf alloc[%d]\n", __func__,
-				audio->ac->session, audio->buf_alloc);
 		if (audio->enabled == 1) {
-			pr_info("%s:AUDIO_START already over\n", __func__);
 			rc = 0;
 			break;
 		}
@@ -77,9 +74,6 @@ static long amrnb_in_ioctl(struct file *file,
 				break;
 			}
 		}
-		pr_debug("%s:session id %d: AUDIO_START enable[%d]\n",
-				__func__, audio->ac->session,
-				audio->enabled);
 		rc = audio_in_enable(audio);
 		if (!rc) {
 			audio->enabled = 1;
@@ -93,12 +87,9 @@ static long amrnb_in_ioctl(struct file *file,
 		while (cnt++ < audio->str_cfg.buffer_count)
 			q6asm_read(audio->ac); /* Push buffer to DSP */
 		rc = 0;
-		pr_debug("%s:session id %d: AUDIO_START success enable[%d]\n",
-				__func__, audio->ac->session, audio->enabled);
 		break;
 	}
 	case AUDIO_STOP: {
-		pr_debug("%s:AUDIO_STOP\n", __func__);
 		rc = audio_in_disable(audio);
 		if (rc  < 0) {
 			pr_err("%s:session id %d: Audio Stop procedure failed"
@@ -136,9 +127,6 @@ static long amrnb_in_ioctl(struct file *file,
 		enc_cfg->band_mode = (cfg.band_mode - 1);
 		enc_cfg->dtx_enable = (cfg.dtx_enable ? 1 : 0);
 		enc_cfg->frame_format = 0;
-		pr_debug("%s:session id %d: band_mode = 0x%x dtx_enable=0x%x\n",
-				__func__, audio->ac->session,
-				enc_cfg->band_mode, enc_cfg->dtx_enable);
 		break;
 	}
 	default:
@@ -217,8 +205,6 @@ static int amrnb_in_open(struct inode *inode, struct file *file)
 			rc = -ENODEV;
 			goto fail;
 		}
-		pr_info("%s:session id %d: NT mode encoder success\n",
-				__func__, audio->ac->session);
 	} else if (!(file->f_mode & FMODE_WRITE) &&
 				(file->f_mode & FMODE_READ)) {
 		audio->feedback = TUNNEL_MODE;
@@ -238,8 +224,6 @@ static int amrnb_in_open(struct inode *inode, struct file *file)
 			rc = -ENODEV;
 			goto fail;
 		}
-		pr_info("%s:session id %d: T mode encoder success\n",
-				__func__, audio->ac->session);
 	} else {
 		pr_err("%s:session id %d: Unexpected mode\n", __func__,
 				audio->ac->session);
@@ -253,7 +237,6 @@ static int amrnb_in_open(struct inode *inode, struct file *file)
 	audio->enc_ioctl = amrnb_in_ioctl;
 	file->private_data = audio;
 
-	pr_info("%s:session id %d: success\n", __func__, audio->ac->session);
 	return 0;
 fail:
 	q6asm_audio_client_free(audio->ac);

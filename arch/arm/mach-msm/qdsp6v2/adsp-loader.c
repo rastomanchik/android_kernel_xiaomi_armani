@@ -115,7 +115,6 @@ static ssize_t adsp_boot_store(struct kobject *kobj,
 	sscanf(buf, "%du", &boot);
 
 	if (boot == BOOT_CMD) {
-		pr_debug("%s:going to call adsp_loader_do", __func__);
 		adsp_loader_do(adsp_private);
 	}
 	return count;

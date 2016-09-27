@@ -25,13 +25,6 @@
 /* Default number of pre-allocated event packets */
 #define PCM_BUFSZ_MIN_AACM	((8*1024) + sizeof(struct dec_meta_out))
 
-#ifdef CONFIG_DEBUG_FS
-static const struct file_operations audio_aac_debug_fops = {
-	.read = audio_aio_debug_read,
-	.open = audio_aio_debug_open,
-};
-#endif
-
 static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	struct q6audio_aio *audio = file->private_data;
@@ -50,8 +43,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			aac_cfg.sample_rate =  audio->pcm_cfg.sample_rate;
 			aac_cfg.ch_cfg = audio->pcm_cfg.channel_count;
 		}
-		pr_debug("%s: AUDIO_START session_id[%d]\n", __func__,
-						audio->ac->session);
 		if (audio->feedback == NON_TUNNEL_MODE) {
 			/* Configure PCM output block */
 			rc = q6asm_enc_cfg_blk_pcm_native(audio->ac,
@@ -95,11 +86,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		aac_cfg.spectral_data_resilience =
 			aac_config->aac_spectral_data_resilience_flag;
 
-		pr_debug("%s:format=%x aot=%d  ch=%d sr=%d\n",
-			__func__, aac_cfg.format,
-			aac_cfg.aot, aac_cfg.ch_cfg,
-			aac_cfg.sample_rate);
-
 		/* Configure Media format block */
 		rc = q6asm_media_format_block_multi_aac(audio->ac, &aac_cfg);
 		if (rc < 0) {
@@ -124,9 +110,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			pr_err("Audio Start procedure failed rc=%d\n", rc);
 			break;
 		}
-		pr_info("%s: AUDIO_START sessionid[%d]enable[%d]\n", __func__,
-						audio->ac->session,
-						audio->enabled);
 		if (audio->stopped == 1)
 			audio->stopped = 0;
 		break;
@@ -152,11 +135,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 				pr_err("%s:AUDIO_SET_AAC_CONFIG: Invalid dual_mono mode =%d\n",
 					 __func__, aac_config->dual_mono_mode);
 			} else {
-				/* convert the data from user into sce_left
-				 * and sce_right based on the definitions
-				 */
-				pr_debug("%s: AUDIO_SET_AAC_CONFIG: modify dual_mono mode =%d\n",
-					 __func__, aac_config->dual_mono_mode);
 				switch (aac_config->dual_mono_mode) {
 				case AUDIO_AAC_DUAL_MONO_PL_PR:
 					sce_left = 1;
@@ -186,7 +164,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		break;
 	}
 	case AUDIO_SET_AAC_MIX_CONFIG:	{
-		pr_debug("%s, AUDIO_SET_AAC_MIX_CONFIG", __func__);
 		if (copy_from_user(audio->codec_cfg, (void *)arg,
 			sizeof(unsigned long))) {
 			rc = -EFAULT;
@@ -194,8 +171,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		} else {
 			unsigned long *mix_coeff =
 					(unsigned long *)audio->codec_cfg;
-			pr_debug("%s, value of coeff = %lu",
-						__func__, *mix_coeff);
 			q6asm_cfg_aac_sel_mix_coef(audio->ac, *mix_coeff);
 			if (rc < 0)
 				pr_err("%s asm aac_sel_mix_coef failed rc=%d\n",
@@ -205,7 +180,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		break;
 	}
 	default:
-		pr_debug("Calling utils ioctl\n");
 		rc = audio->codec_ioctl(file, cmd, arg);
 	}
 	return rc;
@@ -218,10 +192,6 @@ static int audio_open(struct inode *inode, struct file *file)
 	int rc = 0;
 	struct msm_audio_aac_config *aac_config = NULL;
 
-#ifdef CONFIG_DEBUG_FS
-	/* 4 bytes represents decoder number, 1 byte for terminate string */
-	char name[sizeof "msm_multi_aac_" + 5];
-#endif
 	audio = kzalloc(sizeof(struct q6audio_aio), GFP_KERNEL);
 
 	if (audio == NULL) {
@@ -288,17 +258,6 @@ static int audio_open(struct inode *inode, struct file *file)
 		goto fail;
 	}
 
-#ifdef CONFIG_DEBUG_FS
-	snprintf(name, sizeof name, "msm_multi_aac_%04x", audio->ac->session);
-	audio->dentry = debugfs_create_file(name, S_IFREG | S_IRUGO,
-					    NULL, (void *)audio,
-					    &audio_aac_debug_fops);
-
-	if (IS_ERR(audio->dentry))
-		pr_debug("debugfs_create_file failed\n");
-#endif
-	pr_info("%s:AAC 5.1 Decoder OPEN success mode[%d]session[%d]\n",
-		__func__, audio->feedback, audio->ac->session);
 	return rc;
 fail:
 	q6asm_audio_client_free(audio->ac);

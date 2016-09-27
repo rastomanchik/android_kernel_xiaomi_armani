@@ -50,8 +50,6 @@ static long aac_in_ioctl(struct file *file,
 		enc_cfg = audio->enc_cfg;
 		aac_config = audio->codec_cfg;
 		/* ENCODE CFG (after new set of API's are published )bharath*/
-		pr_debug("%s:session id %d: default buf alloc[%d]\n", __func__,
-				audio->ac->session, audio->buf_alloc);
 		if (audio->enabled == 1) {
 			pr_info("%s:AUDIO_START already over\n", __func__);
 			rc = 0;
@@ -67,7 +65,6 @@ static long aac_in_ioctl(struct file *file,
 			}
 		} else {
 			if(audio->feedback == NON_TUNNEL_MODE){
-				pr_debug("%s: starting in non_tunnel mode",__func__);
 				rc = q6asm_open_read_write(audio->ac, FORMAT_MPEG4_AAC,
 						FORMAT_LINEAR_PCM);
 				if (rc < 0) {
@@ -76,7 +73,6 @@ static long aac_in_ioctl(struct file *file,
 				}
 			}
 			if(audio->feedback == TUNNEL_MODE){
-				pr_debug("%s: starting in tunnel mode",__func__);
 				rc = q6asm_open_read(audio->ac,FORMAT_MPEG4_AAC);
 
 				if (rc < 0) {
@@ -87,8 +83,6 @@ static long aac_in_ioctl(struct file *file,
 		audio->stopped = 0;
 		}
 
-		pr_debug("%s:sbr_ps_flag = %d, sbr_flag = %d\n", __func__,
-			aac_config->sbr_ps_on_flag, aac_config->sbr_on_flag);
 		if (aac_config->sbr_ps_on_flag)
 			aac_mode = AAC_ENC_MODE_EAAC_P;
 		else if (aac_config->sbr_on_flag)
@@ -129,13 +123,9 @@ static long aac_in_ioctl(struct file *file,
 		}
 		while (cnt++ < audio->str_cfg.buffer_count)
 			q6asm_read(audio->ac);
-		pr_debug("%s:session id %d: AUDIO_START success enable[%d]\n",
-				__func__, audio->ac->session, audio->enabled);
 		break;
 	}
 	case AUDIO_STOP: {
-		pr_debug("%s:session id %d: Rxed AUDIO_STOP\n", __func__,
-				audio->ac->session);
 		rc = audio_in_disable(audio);
 		if (rc  < 0) {
 			pr_err("%s:session id %d: Audio Stop procedure failed"
@@ -158,9 +148,6 @@ static long aac_in_ioctl(struct file *file,
 		/* ADTS(-1) to ADTS(0x00), RAW(0x00) to RAW(0x03) */
 		cfg.stream_format = ((enc_cfg->stream_format == \
 			0x00) ? AUDIO_AAC_FORMAT_ADTS : AUDIO_AAC_FORMAT_RAW);
-		pr_debug("%s:session id %d: Get-aac-cfg: format=%d sr=%d"
-			"bitrate=%d\n", __func__, audio->ac->session,
-			cfg.stream_format, cfg.sample_rate, cfg.bit_rate);
 		if (copy_to_user((void *)arg, &cfg, sizeof(cfg)))
 			rc = -EFAULT;
 		break;
@@ -173,8 +160,6 @@ static long aac_in_ioctl(struct file *file,
 			rc = -EFAULT;
 			break;
 		}
-		pr_debug("%s:session id %d: Set-aac-cfg: stream=%d\n", __func__,
-					audio->ac->session, cfg.stream_format);
 
 		if ((cfg.stream_format != AUDIO_AAC_FORMAT_RAW)  &&
 			(cfg.stream_format != AAC_FORMAT_ADTS)) {
@@ -213,11 +198,6 @@ static long aac_in_ioctl(struct file *file,
 		enc_cfg->stream_format =
 			((cfg.stream_format == AUDIO_AAC_FORMAT_RAW) ? \
 								0x03 : 0x00);
-		pr_debug("%s:session id %d: Set-aac-cfg:SR= 0x%x ch=0x%x"
-			"bitrate=0x%x, format(adts/raw) = %d\n",
-			__func__, audio->ac->session, enc_cfg->sample_rate,
-			enc_cfg->channels, enc_cfg->bit_rate,
-			enc_cfg->stream_format);
 		break;
 	}
 	case AUDIO_GET_AAC_CONFIG: {
@@ -240,10 +220,6 @@ static long aac_in_ioctl(struct file *file,
 			rc = -EFAULT;
 			break;
 		}
-		pr_debug("%s:session id %d: AUDIO_SET_AAC_CONFIG: sbr_flag = %d"
-				 " sbr_ps_flag = %d\n", __func__,
-				 audio->ac->session, aac_cfg.sbr_on_flag,
-				 aac_cfg.sbr_ps_on_flag);
 		audio_aac_cfg->sbr_on_flag = aac_cfg.sbr_on_flag;
 		audio_aac_cfg->sbr_ps_on_flag = aac_cfg.sbr_ps_on_flag;
 		if ((audio_aac_cfg->sbr_on_flag == 1) ||

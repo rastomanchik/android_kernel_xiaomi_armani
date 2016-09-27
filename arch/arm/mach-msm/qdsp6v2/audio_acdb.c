@@ -196,8 +196,6 @@ void get_all_vocvol_cal(struct acdb_cal_block *cal_block)
 
 void get_anc_cal(struct acdb_cal_block *cal_block)
 {
-	pr_debug("%s\n", __func__);
-
 	if (cal_block == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -215,8 +213,6 @@ done:
 
 void store_anc_cal(struct cal_block *cal_block)
 {
-	pr_debug("%s,\n", __func__);
-
 	if (cal_block->cal_offset > atomic64_read(&acdb_data.mem_len)) {
 		pr_err("%s: offset %d is > mem_len %ld\n",
 			__func__, cal_block->cal_offset,
@@ -236,8 +232,6 @@ done:
 
 void store_afe_cal(int32_t path, struct cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block->cal_offset > atomic64_read(&acdb_data.mem_len)) {
 		pr_err("%s: offset %d is > mem_len %ld\n",
 			__func__, cal_block->cal_offset,
@@ -262,8 +256,6 @@ done:
 
 void get_afe_cal(int32_t path, struct acdb_cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -286,8 +278,6 @@ done:
 
 void store_audproc_cal(int32_t path, struct cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block->cal_offset > atomic64_read(&acdb_data.mem_len)) {
 		pr_err("%s: offset %d is > mem_len %ld\n",
 			__func__, cal_block->cal_offset,
@@ -312,8 +302,6 @@ done:
 
 void get_audproc_cal(int32_t path, struct acdb_cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -336,8 +324,6 @@ done:
 
 void store_audstrm_cal(int32_t path, struct cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block->cal_offset > atomic64_read(&acdb_data.mem_len)) {
 		pr_err("%s: offset %d is > mem_len %ld\n",
 			__func__, cal_block->cal_offset,
@@ -362,8 +348,6 @@ done:
 
 void get_audstrm_cal(int32_t path, struct acdb_cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -386,8 +370,6 @@ done:
 
 void store_audvol_cal(int32_t path, struct cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block->cal_offset > atomic64_read(&acdb_data.mem_len)) {
 		pr_err("%s: offset %d is > mem_len %ld\n",
 			__func__, cal_block->cal_offset,
@@ -412,8 +394,6 @@ done:
 
 void get_audvol_cal(int32_t path, struct acdb_cal_block *cal_block)
 {
-	pr_debug("%s, path = %d\n", __func__, path);
-
 	if (cal_block == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -437,8 +417,6 @@ done:
 void store_vocproc_cal(int32_t len, struct cal_block *cal_blocks)
 {
 	int i;
-	pr_debug("%s\n", __func__);
-
 	if (len > MAX_NETWORKS) {
 		pr_err("%s: Calibration sent for %d networks, only %d are supported!\n",
 			__func__, len, MAX_NETWORKS);
@@ -473,8 +451,6 @@ done:
 
 void get_vocproc_cal(struct acdb_cal_data *cal_data)
 {
-	pr_debug("%s\n", __func__);
-
 	if (cal_data == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -489,8 +465,6 @@ done:
 void store_vocstrm_cal(int32_t len, struct cal_block *cal_blocks)
 {
 	int i;
-	pr_debug("%s\n", __func__);
-
 	if (len > MAX_NETWORKS) {
 		pr_err("%s: Calibration sent for %d networks, only %d are supported!\n",
 			__func__, len, MAX_NETWORKS);
@@ -525,8 +499,6 @@ done:
 
 void get_vocstrm_cal(struct acdb_cal_data *cal_data)
 {
-	pr_debug("%s\n", __func__);
-
 	if (cal_data == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -541,8 +513,6 @@ done:
 void store_vocvol_cal(int32_t len, struct cal_block *cal_blocks)
 {
 	int i;
-	pr_debug("%s\n", __func__);
-
 	if (len > MAX_NETWORKS) {
 		pr_err("%s: Calibration sent for %d networks, only %d are supported!\n",
 			__func__, len, MAX_NETWORKS);
@@ -577,8 +547,6 @@ done:
 
 void get_vocvol_cal(struct acdb_cal_data *cal_data)
 {
-	pr_debug("%s\n", __func__);
-
 	if (cal_data == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -592,8 +560,6 @@ done:
 
 void store_sidetone_cal(struct sidetone_cal *cal_data)
 {
-	pr_debug("%s\n", __func__);
-
 	atomic_set(&acdb_data.sidetone_cal.enable, cal_data->enable);
 	atomic_set(&acdb_data.sidetone_cal.gain, cal_data->gain);
 }
@@ -601,8 +567,6 @@ void store_sidetone_cal(struct sidetone_cal *cal_data)
 
 void get_sidetone_cal(struct sidetone_cal *cal_data)
 {
-	pr_debug("%s\n", __func__);
-
 	if (cal_data == NULL) {
 		pr_err("ACDB=> NULL pointer sent to %s\n", __func__);
 		goto done;
@@ -617,12 +581,6 @@ done:
 static int acdb_open(struct inode *inode, struct file *f)
 {
 	s32 result = 0;
-	pr_debug("%s\n", __func__);
-
-	if (atomic64_read(&acdb_data.mem_len)) {
-		pr_debug("%s: ACDB opened but memory allocated, using existing allocation!\n",
-			__func__);
-	}
 
 	atomic_inc(&usage_count);
 	return result;
@@ -690,12 +648,6 @@ static int register_memory(void)
 	atomic64_set(&acdb_data.mem_len, mem_len);
 	mutex_unlock(&acdb_data.acdb_mutex);
 
-	pr_debug("%s done! paddr = 0x%lx, kvaddr = 0x%lx, len = x%lx\n",
-		 __func__,
-		(long)atomic64_read(&acdb_data.paddr),
-		(long)atomic64_read(&acdb_data.kvaddr),
-		(long)atomic64_read(&acdb_data.mem_len));
-
 	return result;
 err_ion_handle:
 	ion_free(acdb_data.ion_client, acdb_data.ion_handle);
@@ -715,14 +667,11 @@ static long acdb_ioctl(struct file *f,
 	int32_t			map_fd;
 	uint32_t		topology;
 	uint32_t		data[MAX_IOCTL_DATA];
-	pr_debug("%s\n", __func__);
 
 	switch (cmd) {
 	case AUDIO_REGISTER_PMEM:
-		pr_debug("AUDIO_REGISTER_PMEM\n");
 		if (atomic_read(&acdb_data.mem_len)) {
 			deregister_memory();
-			pr_debug("Remove the existing memory\n");
 		}
 
 		if (copy_from_user(&map_fd, (void *)arg, sizeof(map_fd))) {
@@ -735,7 +684,6 @@ static long acdb_ioctl(struct file *f,
 		goto done;
 
 	case AUDIO_DEREGISTER_PMEM:
-		pr_debug("AUDIO_DEREGISTER_PMEM\n");
 		deregister_memory();
 		goto done;
 	case AUDIO_SET_VOICE_RX_TOPOLOGY:
@@ -889,8 +837,6 @@ static int acdb_mmap(struct file *file, struct vm_area_struct *vma)
 	int result = 0;
 	uint32_t size = vma->vm_end - vma->vm_start;
 
-	pr_debug("%s\n", __func__);
-
 	if (atomic64_read(&acdb_data.mem_len)) {
 		if (size <= atomic64_read(&acdb_data.mem_len)) {
 			vma->vm_page_prot = pgprot_noncached(
@@ -918,9 +864,6 @@ static int acdb_release(struct inode *inode, struct file *f)
 
 	atomic_dec(&usage_count);
 	atomic_read(&usage_count);
-
-	pr_debug("%s: ref count %d!\n", __func__,
-		atomic_read(&usage_count));
 
 	if (atomic_read(&usage_count) >= 1)
 		result = -EBUSY;

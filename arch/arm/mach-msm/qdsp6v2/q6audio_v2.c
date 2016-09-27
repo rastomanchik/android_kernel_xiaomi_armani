@@ -29,9 +29,6 @@ void q6asm_in_cb(uint32_t opcode, uint32_t token,
 	struct q6audio_in *audio = (struct q6audio_in *)priv;
 	unsigned long flags;
 
-	pr_debug("%s:session id %d: opcode[0x%x]\n", __func__,
-			audio->ac->session, opcode);
-
 	spin_lock_irqsave(&audio->dsp_lock, flags);
 	switch (opcode) {
 	case ASM_DATA_EVENT_READ_DONE_V2:
@@ -52,7 +49,6 @@ void q6asm_in_cb(uint32_t opcode, uint32_t token,
 			__func__, audio->ac->session);
 		break;
 	case RESET_EVENTS:
-		pr_debug("%s:received RESET EVENTS\n", __func__);
 		audio->enabled = 0;
 		audio->stopped = 1;
 		audio->event_abort = 1;
@@ -60,7 +56,6 @@ void q6asm_in_cb(uint32_t opcode, uint32_t token,
 		wake_up(&audio->write_wait);
 		break;
 	default:
-		pr_debug("%s:session id %d: Ignore opcode[0x%x]\n", __func__,
 			audio->ac->session, opcode);
 		break;
 	}
@@ -74,16 +69,6 @@ void  audio_in_get_dsp_frames(void *priv,
 	uint32_t index;
 
 	index = token;
-	pr_debug("%s:session id %d: index=%d nr frames=%d offset[%d]\n",
-			__func__, audio->ac->session, token, payload[9],
-			payload[5]);
-	pr_debug("%s:session id %d: timemsw=%d lsw=%d\n", __func__,
-			audio->ac->session, payload[7], payload[6]);
-	pr_debug("%s:session id %d: uflags=0x%8x uid=0x%8x\n", __func__,
-			audio->ac->session, payload[8], payload[10]);
-	pr_debug("%s:session id %d: enc_framesotal_size=0x%8x\n", __func__,
-			audio->ac->session, payload[4]);
-
 	audio->out_frame_info[index][0] = payload[9];
 	audio->out_frame_info[index][1] = payload[5];
 

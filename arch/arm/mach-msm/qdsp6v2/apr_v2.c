@@ -17,7 +17,6 @@
 #include <linux/kernel.h>
 #include <mach/qdsp6v2/apr.h>
 #include <mach/qdsp6v2/apr_tal.h>
-#include <mach/qdsp6v2/dsp_debug.h>
 
 static const char *lpass_subsys_name = "adsp";
 
@@ -50,7 +49,6 @@ struct apr_svc *apr_register(char *dest, char *svc_name, apr_fn svc_fn,
 			pr_err("%s: adsp not up\n", __func__);
 			return NULL;
 		}
-		pr_debug("%s: adsp Up\n", __func__);
 	} else if ((dest_id == APR_DEST_MODEM) &&
 		   (apr_get_modem_state() == APR_SUBSYS_DOWN)) {
                 if (is_modem_up) {
@@ -58,13 +56,11 @@ struct apr_svc *apr_register(char *dest, char *svc_name, apr_fn svc_fn,
                             due to SSR, return", __func__);
                     return NULL;
                 }
-                pr_debug("%s: Wait for modem to bootup\n", __func__);
 		rc = apr_wait_for_device_up(dest_id);
 		if (rc == 0) {
 			pr_err("%s: Modem is not Up\n", __func__);
 			return NULL;
 		}
-		pr_debug("%s: modem Up\n", __func__);
 	}
 
 	if (apr_get_svc(svc_name, dest_id, &client_id, &svc_idx, &svc_id)) {
@@ -101,7 +97,6 @@ struct apr_svc *apr_register(char *dest, char *svc_name, apr_fn svc_fn,
 	svc->client_id = client_id;
 	if (src_port != 0xFFFFFFFF) {
 		temp_port = ((src_port >> 8) * 8) + (src_port & 0xFF);
-		pr_debug("port = %d t_port = %d\n", src_port, temp_port);
 		if (temp_port >= APR_MAX_PORTS || temp_port < 0) {
 			pr_err("APR: temp_port out of bounds\n");
 			mutex_unlock(&svc->m_lock);

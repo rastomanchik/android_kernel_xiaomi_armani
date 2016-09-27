@@ -335,8 +335,6 @@ static int snddev_icodec_open_rx(struct snddev_icodec_state *icodec)
 	 * clock / bit clock = divider value = 8
 	 */
 	if (msm_codec_i2s_slave_mode) {
-		pr_info("%s: configuring bit clock for slave mode\n",
-				__func__);
 		trc =  clk_set_rate(drv->rx_bitclk, 0);
 	} else
 		trc =  clk_set_rate(drv->rx_bitclk, 8);
@@ -465,8 +463,6 @@ static int snddev_icodec_open_tx(struct snddev_icodec_state *icodec)
 	 * clock / bit clock = divider value = 8
 	 */
 	if (msm_codec_i2s_slave_mode) {
-		pr_info("%s: configuring bit clock for slave mode\n",
-				__func__);
 		trc =  clk_set_rate(drv->tx_bitclk, 0);
 	} else
 		trc =  clk_set_rate(drv->tx_bitclk, 8);
@@ -802,9 +798,7 @@ static int snddev_icodec_check_freq(u32 req_freq)
 			(req_freq == 32000) || (req_freq == 44100) ||
 			(req_freq == 48000)) {
 				rc = 0;
-		} else
-			pr_info("%s: Unsupported Frequency:%d\n", __func__,
-								req_freq);
+		} 
 	}
 	return rc;
 }
@@ -889,8 +883,6 @@ static int snddev_icodec_enable_anc(struct msm_snddev_info *dev_info,
 	struct snddev_icodec_state *icodec;
 	struct snddev_icodec_drv_state *drv = &snddev_icodec_drv;
 
-	pr_info("%s: enable=%d\n", __func__, enable);
-
 	if (!dev_info) {
 		pr_err("invalid dev_info\n");
 		rc = -EINVAL;
@@ -946,7 +938,6 @@ int snddev_icodec_set_device_volume(struct msm_snddev_info *dev_info,
 	int rc = -EPERM;
 
 	if (!dev_info) {
-		pr_info("%s : device not intilized.\n", __func__);
 		return  -EINVAL;
 	}
 
@@ -954,9 +945,6 @@ int snddev_icodec_set_device_volume(struct msm_snddev_info *dev_info,
 
 	if (!(icodec->data->dev_vol_type & (SNDDEV_DEV_VOL_DIGITAL
 				| SNDDEV_DEV_VOL_ANALOG))) {
-
-		pr_info("%s : device %s does not support device volume "
-				"control.", __func__, dev_info->name);
 		return -EPERM;
 	}
 	dev_info->dev_volume =  volume;

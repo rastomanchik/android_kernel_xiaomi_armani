@@ -17,15 +17,6 @@
 
 #include "audio_utils_aio.h"
 
-
-
-#ifdef CONFIG_DEBUG_FS
-static const struct file_operations audio_evrc_debug_fops = {
-	.read = audio_aio_debug_read,
-	.open = audio_aio_debug_open,
-};
-#endif
-
 static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	struct q6audio_aio *audio = file->private_data;
@@ -33,8 +24,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 	switch (cmd) {
 	case AUDIO_START: {
-		pr_debug("%s[%p]: AUDIO_START session_id[%d]\n", __func__,
-						audio, audio->ac->session);
 		if (audio->feedback == NON_TUNNEL_MODE) {
 			/* Configure PCM output block */
 			rc = q6asm_enc_cfg_blk_pcm(audio->ac,
@@ -56,15 +45,11 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			pr_err("Audio Start procedure failed rc=%d\n", rc);
 			break;
 		}
-		pr_debug("%s: AUDIO_START sessionid[%d]enable[%d]\n", __func__,
-						audio->ac->session,
-						audio->enabled);
 		if (audio->stopped == 1)
 			audio->stopped = 0;
 		break;
 	}
 	default:
-		pr_debug("%s[%p]: Calling utils ioctl\n", __func__, audio);
 		rc = audio->codec_ioctl(file, cmd, arg);
 	}
 	return rc;
@@ -75,10 +60,6 @@ static int audio_open(struct inode *inode, struct file *file)
 	struct q6audio_aio *audio = NULL;
 	int rc = 0;
 
-#ifdef CONFIG_DEBUG_FS
-	/* 4 bytes represents decoder number, 1 byte for terminate string */
-	char name[sizeof "msm_evrc_" + 5];
-#endif
 	audio = kzalloc(sizeof(struct q6audio_aio), GFP_KERNEL);
 
 	if (audio == NULL) {
@@ -134,18 +115,6 @@ static int audio_open(struct inode *inode, struct file *file)
 		goto fail;
 	}
 
-#ifdef CONFIG_DEBUG_FS
-	snprintf(name, sizeof name, "msm_evrc_%04x", audio->ac->session);
-	audio->dentry = debugfs_create_file(name, S_IFREG | S_IRUGO,
-					    NULL, (void *)audio,
-					    &audio_evrc_debug_fops);
-
-	if (IS_ERR(audio->dentry))
-		pr_debug("debugfs_create_file failed\n");
-#endif
-	pr_info("%s:dec success mode[%d]session[%d]\n", __func__,
-						audio->feedback,
-						audio->ac->session);
 	return rc;
 fail:
 	q6asm_audio_client_free(audio->ac);

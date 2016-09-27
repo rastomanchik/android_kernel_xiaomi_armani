@@ -17,30 +17,6 @@
 #include <linux/msm_audio_amrwbplus.h>
 #include "audio_utils_aio.h"
 
-#ifdef CONFIG_DEBUG_FS
-static const struct file_operations audio_amrwbplus_debug_fops = {
-	.read = audio_aio_debug_read,
-	.open = audio_aio_debug_open,
-};
-static void config_debug_fs(struct q6audio_aio *audio)
-{
-	if (audio != NULL) {
-		char name[sizeof("msm_amrwbplus_") + 5];
-		snprintf(name, sizeof(name), "msm_amrwbplus_%04x",
-			audio->ac->session);
-		audio->dentry = debugfs_create_file(name, S_IFREG | S_IRUGO,
-						NULL, (void *)audio,
-						&audio_amrwbplus_debug_fops);
-		if (IS_ERR(audio->dentry))
-			pr_debug("debugfs_create_file failed\n");
-	}
-}
-#else
-static void config_debug_fs(struct q6audio_aio *audio)
-{
-}
-#endif
-
 static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	struct asm_amrwbplus_cfg q6_amrwbplus_cfg;
@@ -96,9 +72,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 			pr_err("Audio Start procedure failed rc=%d\n", rc);
 			break;
 		}
-		pr_debug("%s:AUDIO_START sessionid[%d]enable[%d]\n", __func__,
-			audio->ac->session,
-			audio->enabled);
 		if (audio->stopped == 1)
 			audio->stopped = 0;
 			break;
@@ -134,7 +107,6 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		break;
 	}
 	default:
-		pr_debug("%s[%p]: Calling utils ioctl\n", __func__, audio);
 		rc = audio->codec_ioctl(file, cmd, arg);
 	}
 	return rc;
@@ -205,10 +177,6 @@ static int audio_open(struct inode *inode, struct file *file)
 		goto fail;
 	}
 
-	config_debug_fs(audio);
-	pr_debug("%s: AMRWBPLUS dec success mode[%d]session[%d]\n", __func__,
-		audio->feedback,
-		audio->ac->session);
 	return 0;
 fail:
 	q6asm_audio_client_free(audio->ac);

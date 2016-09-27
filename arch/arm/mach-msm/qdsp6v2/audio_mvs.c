@@ -84,9 +84,6 @@ static uint32_t audio_mvs_get_rate(uint32_t mvs_mode, uint32_t rate_type)
 	else
 		cvs_rate = rate_type;
 
-	pr_debug("%s: CVS rate is %d for MVS mode %d\n",
-		 __func__, cvs_rate, mvs_mode);
-
 	return cvs_rate;
 }
 
@@ -591,7 +588,6 @@ static void audio_mvs_process_dl_pkt(uint8_t *voc_pkt,
 	} else {
 		*pkt_len = 0;
 
-		pr_info("%s: No DL data available to send to MVS\n", __func__);
 	}
 
 	spin_unlock_irqrestore(&audio->dsp_lock, dsp_flags);
@@ -667,8 +663,6 @@ static uint32_t audio_mvs_get_media_type(uint32_t mvs_mode, uint32_t rate_type)
 		media_type = VSS_MEDIA_ID_PCM_NB;
 	}
 
-	pr_debug("%s: media_type is 0x%x\n", __func__, media_type);
-
 	return media_type;
 }
 
@@ -702,16 +696,12 @@ static uint32_t audio_mvs_get_network_type(uint32_t mvs_mode)
 		network_type = VSS_NETWORK_ID_DEFAULT;
 	}
 
-	pr_debug("%s: network_type is 0x%x\n", __func__, network_type);
-
 	return network_type;
 }
 
 static int audio_mvs_start(struct audio_mvs_info_type *audio)
 {
 	int rc = 0;
-
-	pr_info("%s\n", __func__);
 
 	/* Prevent sleep. */
 	wake_lock(&audio->suspend_lock);
@@ -744,8 +734,6 @@ static int audio_mvs_stop(struct audio_mvs_info_type *audio)
 {
 	int rc = 0;
 
-	pr_info("%s\n", __func__);
-
 	voice_set_voc_path_full(0);
 
 	audio->state = AUDIO_MVS_STOPPED;
@@ -763,8 +751,6 @@ static int audio_mvs_open(struct inode *inode, struct file *file)
 	int i;
 	int offset = 0;
 	struct audio_mvs_buf_node *buf_node = NULL;
-
-	pr_info("%s\n", __func__);
 
 	mutex_lock(&audio_mvs_info.lock);
 
@@ -813,8 +799,6 @@ static int audio_mvs_release(struct inode *inode, struct file *file)
 	struct list_head *next = NULL;
 	struct audio_mvs_buf_node *buf_node = NULL;
 	struct audio_mvs_info_type *audio = file->private_data;
-
-	pr_info("%s\n", __func__);
 
 	mutex_lock(&audio->lock);
 
@@ -869,8 +853,6 @@ static ssize_t audio_mvs_read(struct file *file,
 	int rc = 0;
 	struct audio_mvs_buf_node *buf_node = NULL;
 	struct audio_mvs_info_type *audio = file->private_data;
-
-	pr_debug("%s:\n", __func__);
 
 	rc = wait_event_interruptible_timeout(audio->out_wait,
 					     (!list_empty(&audio->out_queue) ||
@@ -944,8 +926,6 @@ static ssize_t audio_mvs_write(struct file *file,
 	struct audio_mvs_buf_node *buf_node = NULL;
 	struct audio_mvs_info_type *audio = file->private_data;
 
-	pr_debug("%s:\n", __func__);
-
 	rc = wait_event_interruptible_timeout(audio->in_wait,
 		(!list_empty(&audio->free_in_queue) ||
 		audio->state == AUDIO_MVS_STOPPED), 1 * HZ);
@@ -1004,8 +984,6 @@ static long audio_mvs_ioctl(struct file *file,
 	int rc = 0;
 	struct audio_mvs_info_type *audio = file->private_data;
 
-	pr_info("%s:\n", __func__);
-
 	switch (cmd) {
 	case AUDIO_GET_MVS_CONFIG: {
 		struct msm_audio_mvs_config config;
@@ -1032,8 +1010,6 @@ static long audio_mvs_ioctl(struct file *file,
 
 	case AUDIO_SET_MVS_CONFIG: {
 		struct msm_audio_mvs_config config;
-
-		pr_info("%s: IOCTL SET_MVS_CONFIG\n", __func__);
 
 		rc = copy_from_user(&config, (void *)arg, sizeof(config));
 		if (rc == 0) {
@@ -1063,7 +1039,6 @@ static long audio_mvs_ioctl(struct file *file,
 	}
 
 	case AUDIO_START: {
-		pr_info("%s: IOCTL START\n", __func__);
 
 		mutex_lock(&audio->lock);
 
@@ -1085,7 +1060,6 @@ static long audio_mvs_ioctl(struct file *file,
 	}
 
 	case AUDIO_STOP: {
-		pr_info("%s: IOCTL STOP\n", __func__);
 
 		mutex_lock(&audio->lock);
 
@@ -1158,7 +1132,6 @@ static int __init audio_mvs_init(void)
 }
 
 static void __exit audio_mvs_exit(void){
-	pr_info("%s:\n", __func__);
 
 	misc_deregister(&audio_mvs_misc);
 }

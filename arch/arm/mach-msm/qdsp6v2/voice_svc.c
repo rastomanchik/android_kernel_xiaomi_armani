@@ -79,12 +79,8 @@ static int32_t qdsp_apr_callback(struct apr_client_data *data, void *priv)
 
 	prtd = (struct voice_svc_prvt*)priv;
 
-	pr_debug("%s: data->opcode %x\n", __func__,
-		 data->opcode);
-
 	if (data->opcode == RESET_EVENTS) {
 		if (data->reset_proc == APR_DEST_QDSP6) {
-			pr_debug("%s: Received reset event\n", __func__);
 
 			if (prtd->apr_q6_mvm != NULL) {
 				apr_reset(prtd->apr_q6_mvm);
@@ -95,8 +91,6 @@ static int32_t qdsp_apr_callback(struct apr_client_data *data, void *priv)
 				apr_reset(prtd->apr_q6_cvs);
 				prtd->apr_q6_cvs = NULL;
 			}
-		} else if (data->reset_proc ==APR_DEST_MODEM) {
-			pr_debug("%s: Received Modem reset event\n", __func__);
 		}
 	}
 
@@ -209,8 +203,6 @@ static int voice_svc_send_req(struct voice_svc_cmd_request *apr_request,
 			__func__);
 		ret = -EINVAL;
 	} else {
-		pr_debug("%s: apr packet sent successfully %d\n",
-				__func__, ret);
 		ret = 0;
 	}
 
@@ -256,8 +248,6 @@ static int voice_svc_reg(char *svc, uint32_t src_port,
 		ret = -EFAULT;
 		goto done;
 	}
-	pr_debug("%s: register %s successful\n",
-		__func__, svc);
 done:
 	return ret;
 }
@@ -273,8 +263,6 @@ static int voice_svc_dereg(char *svc, void **handle)
 
 	apr_deregister(*handle);
 	*handle = NULL;
-	pr_debug("%s: deregister %s successful\n",
-		__func__, svc);
 
 done:
 	return 0;
@@ -328,14 +316,10 @@ static long voice_svc_ioctl(struct file *file, unsigned int cmd,
 	uint32_t user_payload_size = 0;
 	unsigned long spin_flags;
 
-	pr_debug("%s: cmd: %u\n", __func__, cmd);
-
 	prtd = (struct voice_svc_prvt*)file->private_data;
 
 	switch (cmd) {
 	case SNDRV_VOICE_SVC_REGISTER_SVC:
-		pr_debug("%s: size of struct: %d\n", __func__,
-				sizeof(apr_reg_svc));
 		if (copy_from_user(&apr_reg_svc, arg, sizeof(apr_reg_svc))) {
 			pr_err("%s: copy_from_user failed\n", __func__);
 
@@ -396,8 +380,6 @@ static long voice_svc_ioctl(struct file *file, unsigned int cmd,
 
 			user_payload_size =
 			    ((struct voice_svc_cmd_response*)arg)->payload_size;
-			pr_debug("%s: RESPONSE: user payload size %d",
-				 __func__, user_payload_size);
 
 			spin_lock_irqsave(&prtd->response_lock, spin_flags);
 			if (!list_empty(&prtd->response_queue)) {
@@ -451,31 +433,23 @@ static long voice_svc_ioctl(struct file *file, unsigned int cmd,
 			} else {
 				spin_unlock_irqrestore(&prtd->response_lock,
 							spin_flags);
-				pr_debug("%s: wait for a response\n", __func__);
-
 				ret = wait_event_interruptible_timeout(
 					prtd->response_wait,
 					!list_empty(&prtd->response_queue),
 					msecs_to_jiffies(TIMEOUT_MS));
 				if (ret == 0) {
-					pr_debug("%s: Read timeout\n", __func__);
 					ret = -ETIMEDOUT;
 					goto done;
 				} else if (ret > 0 &&
 					!list_empty(&prtd->response_queue)) {
-					pr_debug("%s: Interrupt recieved for response\n",
-						__func__);
 					ret = 0;
 				} else if (ret < 0) {
-					pr_debug("%s: Interrupted by SIGNAL %d\n",
-						__func__, ret);
 					goto done;
 				}
 			}
 		} while(!apr_response);
 		break;
 	default:
-		pr_debug("%s: cmd: %u\n", __func__, cmd);
 		ret = -EINVAL;
 	}
 
@@ -490,7 +464,6 @@ static int voice_svc_dummy_reg()
 {
 	uint32_t src_port = APR_MAX_PORTS - 1;
 
-	pr_debug("%s\n", __func__);
 	dummy_q6_mvm = apr_register("ADSP", "MVM",
 				qdsp_dummy_apr_callback,
 				src_port,
@@ -612,7 +585,6 @@ static int voice_svc_probe(struct platform_device *pdev)
 			ret);
 		goto add_err;
 	}
-	pr_debug("%s: Device created\n", __func__);
 	goto done;
 
 add_err:
