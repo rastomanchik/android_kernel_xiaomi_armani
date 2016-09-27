@@ -627,10 +627,6 @@ static void delete_object_full(unsigned long ptr)
 
 	object = find_and_get_object(ptr, 0);
 	if (!object) {
-#ifdef DEBUG
-		kmemleak_warn("Freeing unknown object at 0x%08lx\n",
-			      ptr);
-#endif
 		return;
 	}
 	__delete_object(object);
@@ -649,10 +645,6 @@ static void delete_object_part(unsigned long ptr, size_t size)
 
 	object = find_and_get_object(ptr, 1);
 	if (!object) {
-#ifdef DEBUG
-		kmemleak_warn("Partially freeing unknown object at 0x%08lx "
-			      "(size %zu)\n", ptr, size);
-#endif
 		return;
 	}
 	__delete_object(object);
@@ -1736,17 +1728,6 @@ static int kmemleak_boot_config(char *str)
 }
 early_param("kmemleak", kmemleak_boot_config);
 
-static void __init print_log_trace(struct early_log *log)
-{
-	struct stack_trace trace;
-
-	trace.nr_entries = log->trace_len;
-	trace.entries = log->trace;
-
-	pr_notice("Early log backtrace:\n");
-	print_stack_trace(&trace, 2);
-}
-
 /*
  * Kmemleak initialization.
  */
@@ -1826,7 +1807,6 @@ void __init kmemleak_init(void)
 		}
 
 		if (atomic_read(&kmemleak_warning)) {
-			print_log_trace(log);
 			atomic_set(&kmemleak_warning, 0);
 		}
 	}

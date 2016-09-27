@@ -37,9 +37,6 @@ static inline void count_compact_events(enum vm_event_item item, long delta)
 
 #if defined CONFIG_COMPACTION || defined CONFIG_CMA
 
-#define CREATE_TRACE_POINTS
-#include <trace/events/compaction.h>
-
 static unsigned long release_freepages(struct list_head *freelist)
 {
 	struct page *page, *next;
@@ -307,8 +304,6 @@ isolate_fail:
 			break;
 
 	}
-
-	trace_mm_compaction_isolate_freepages(nr_scanned, total_isolated);
 
 	/*
 	 * If strict isolation is requested by CMA then check that all the
@@ -612,8 +607,6 @@ next_pageblock:
 	/* Update the pageblock-skip if the whole pageblock was scanned */
 	if (low_pfn == end_pfn)
 		update_pageblock_skip(cc, valid_page, nr_isolated, true);
-
-	trace_mm_compaction_isolate_migratepages(nr_scanned, nr_isolated);
 
 	count_compact_events(COMPACTMIGRATE_SCANNED, nr_scanned);
 	if (nr_isolated)
@@ -969,9 +962,6 @@ static int compact_zone(struct zone *zone, struct compact_control *cc)
 				cc->sync ? MIGRATE_SYNC_LIGHT : MIGRATE_ASYNC);
 		update_nr_listpages(cc);
 		nr_remaining = cc->nr_migratepages;
-
-		trace_mm_compaction_migratepages(nr_migrate - nr_remaining,
-						nr_remaining);
 
 		/* Release LRU pages not migrated */
 		if (err) {
