@@ -321,8 +321,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		            -fno-strict-aliasing -fno-common \
 		            -Werror-implicit-function-declaration \
 		            -Wno-format-security -Wno-discarded-qualifiers \
-		            -Wno-discarded-array-qualifiers\
-		            -fno-delete-null-pointer-checks
+		            -Wno-discarded-array-qualifiers -Wno-bool-compare \
+		            -fno-delete-null-pointer-checks -Wno-logical-not-parentheses
 		        
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=

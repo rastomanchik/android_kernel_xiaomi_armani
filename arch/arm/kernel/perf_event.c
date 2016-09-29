@@ -1153,6 +1153,15 @@ perf_callchain_user(struct perf_callchain_entry *entry, struct pt_regs *regs)
 		tail = user_backtrace(tail, entry);
 }
 
+static int
+callchain_trace(struct stackframe *fr,
+		void *data)
+{
+	struct perf_callchain_entry *entry = data;
+	perf_callchain_store(entry, fr->pc);
+	return 0;
+}
+
 void
 perf_callchain_kernel(struct perf_callchain_entry *entry, struct pt_regs *regs)
 {
@@ -1162,5 +1171,5 @@ perf_callchain_kernel(struct perf_callchain_entry *entry, struct pt_regs *regs)
 	fr.sp = regs->ARM_sp;
 	fr.lr = regs->ARM_lr;
 	fr.pc = regs->ARM_pc;
-//	walk_stackframe(&fr, callchain_trace, entry);
+	walk_stackframe(&fr, callchain_trace, entry);
 }
