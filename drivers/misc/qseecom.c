@@ -801,7 +801,7 @@ static int __qseecom_process_incomplete_cmd(struct qseecom_dev_handle *data,
 			return -EINVAL;
 		}
 		if (ptr_svc->svc.listener_id != lstnr) {
-			pr_warning("Service requested for does on exist\n");
+			pr_debug("Service requested for does on exist\n");
 			return -ERESTARTSYS;
 		}
 		pr_debug("waking up rcv_req_wq and "
@@ -960,7 +960,7 @@ static int qseecom_load_app(struct qseecom_dev_handle *data, void __user *argp)
 		&qseecom.registered_app_list_lock, flags);
 		ret = 0;
 	} else {
-		pr_warn("App (%s) does'nt exist, loading apps for first time\n",
+		pr_debug("App (%s) does'nt exist, loading apps for first time\n",
 			(char *)(load_img_req.img_name));
 		/* Get the handle of the shared fd */
 		ihandle = ion_import_dma_buf(qseecom.ion_clnt,
@@ -1051,7 +1051,7 @@ static int qseecom_load_app(struct qseecom_dev_handle *data, void __user *argp)
 		spin_unlock_irqrestore(&qseecom.registered_app_list_lock,
 									flags);
 
-		pr_warn("App with id %d (%s) now loaded\n", app_id,
+		pr_debug("App with id %d (%s) now loaded\n", app_id,
 		(char *)(load_img_req.img_name));
 	}
 	data->client.app_id = app_id;
@@ -1147,7 +1147,7 @@ static int qseecom_unload_app(struct qseecom_dev_handle *data,
 	}
 
 	if (found_dead_app) {
-		pr_warn("cleanup app_id %d(%s)\n", data->client.app_id,
+		pr_debug("cleanup app_id %d(%s)\n", data->client.app_id,
 			(char *)data->client.app_name);
 		__qseecom_cleanup_app(data);
 	}
@@ -1167,7 +1167,7 @@ static int qseecom_unload_app(struct qseecom_dev_handle *data,
 								req.app_id);
 			return -EFAULT;
 		} else {
-			pr_warn("App id %d now unloaded\n", req.app_id);
+			pr_debug("App id %d now unloaded\n", req.app_id);
 		}
 		if (resp.result == QSEOS_RESULT_FAILURE) {
 			pr_err("app (%d) unload_failed!!\n",
@@ -2246,7 +2246,7 @@ int qseecom_start_app(struct qseecom_handle **handle,
 
 	data->client.app_id = ret;
 	if (ret > 0) {
-		pr_warn("App id %d for [%s] app exists\n", ret,
+		pr_debug("App id %d for [%s] app exists\n", ret,
 			(char *)app_ireq.app_name);
 		spin_lock_irqsave(&qseecom.registered_app_list_lock, flags);
 		list_for_each_entry(entry,
@@ -2260,7 +2260,7 @@ int qseecom_start_app(struct qseecom_handle **handle,
 		spin_unlock_irqrestore(
 				&qseecom.registered_app_list_lock, flags);
 		if (!found_app)
-			pr_warn("App_id %d [%s] was loaded but not registered\n",
+			pr_debug("App_id %d [%s] was loaded but not registered\n",
 					ret, (char *)app_ireq.app_name);
 	} else {
 		/* load the app and get the app_id  */
@@ -4232,7 +4232,7 @@ static int __qseecom_init_clk(enum qseecom_ce_hw_instance ce)
 			return -EIO;
 		}
 	} else {
-		pr_warn("Unable to get CE core src clk, set to NULL\n");
+		pr_debug("Unable to get CE core src clk, set to NULL\n");
 		qclk->ce_core_src_clk = NULL;
 	}
 
@@ -4405,7 +4405,7 @@ static int __devinit qseecom_probe(struct platform_device *pdev)
 		qseecom.support_bus_scaling =
 				of_property_read_bool((&pdev->dev)->of_node,
 						"qcom,support-bus-scaling");
-		pr_warn("support_bus_scaling=0x%x",
+		pr_debug("support_bus_scaling=0x%x",
 				qseecom.support_bus_scaling);
 		qseecom.support_fde =
 				of_property_read_bool((&pdev->dev)->of_node,
@@ -4418,11 +4418,11 @@ static int __devinit qseecom_probe(struct platform_device *pdev)
 				rc = -EINVAL;
 				goto exit_destroy_ion_client;
 			} else {
-				pr_warn("disk-encrypt-pipe-pair=0x%x",
+				pr_debug("disk-encrypt-pipe-pair=0x%x",
 				qseecom.ce_info.disk_encrypt_pipe);
 			}
 		} else {
-			pr_warn("Device does not support FDE");
+			pr_debug("Device does not support FDE");
 			qseecom.ce_info.disk_encrypt_pipe = 0xff;
 		}
 		qseecom.support_pfe =
@@ -4436,11 +4436,11 @@ static int __devinit qseecom_probe(struct platform_device *pdev)
 				rc = -EINVAL;
 				goto exit_destroy_ion_client;
 			} else {
-				pr_warn("file-encrypt-pipe-pair=0x%x",
+				pr_debug("file-encrypt-pipe-pair=0x%x",
 				qseecom.ce_info.file_encrypt_pipe);
 			}
 		} else {
-			pr_warn("Device does not support PFE");
+			pr_debug("Device does not support PFE");
 			qseecom.ce_info.file_encrypt_pipe = 0xff;
 		}
 		if (qseecom.support_pfe || qseecom.support_fde) {
@@ -4451,11 +4451,11 @@ static int __devinit qseecom_probe(struct platform_device *pdev)
 				rc = -EINVAL;
 				goto exit_destroy_ion_client;
 			} else {
-				pr_warn("hlos-ce-hw-instance=0x%x",
+				pr_debug("hlos-ce-hw-instance=0x%x",
 				qseecom.ce_info.hlos_ce_hw_instance);
 			}
 		} else {
-			pr_warn("Device does not support PFE/FDE");
+			pr_debug("Device does not support PFE/FDE");
 			qseecom.ce_info.hlos_ce_hw_instance = 0xff;
 		}
 
@@ -4466,15 +4466,13 @@ static int __devinit qseecom_probe(struct platform_device *pdev)
 			rc = -EINVAL;
 			goto exit_destroy_ion_client;
 		} else {
-			pr_warn("qsee-ce-hw-instance=0x%x",
+			pr_debug("qsee-ce-hw-instance=0x%x",
 			qseecom.ce_info.qsee_ce_hw_instance);
 		}
 
 		qseecom.appsbl_qseecom_support =
 				of_property_read_bool((&pdev->dev)->of_node,
 						"qcom,appsbl-qseecom-support");
-		pr_info("qseecom.appsbl_qseecom_support = 0x%x",
-				qseecom.appsbl_qseecom_support);
 
 		qseecom.qsee.instance = qseecom.ce_info.qsee_ce_hw_instance;
 		qseecom.ce_drv.instance = qseecom.ce_info.hlos_ce_hw_instance;
@@ -4514,7 +4512,7 @@ static int __devinit qseecom_probe(struct platform_device *pdev)
 				req.qsee_cmd_id = QSEOS_APP_REGION_NOTIFICATION;
 				req.addr = resource->start;
 				req.size = resource_size(resource);
-				pr_warn("secure app region addr=0x%x size=0x%x",
+				pr_debug("secure app region addr=0x%x size=0x%x",
 							req.addr, req.size);
 			} else {
 				pr_err("Fail to get secure app region info\n");
