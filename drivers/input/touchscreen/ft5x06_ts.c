@@ -36,6 +36,9 @@
 #elif defined(CONFIG_HAS_EARLYSUSPEND)
 #include <linux/earlysuspend.h>
 #endif
+#ifdef CONFIG_TOUCHSCREEN_SWEEP2WAKE
+#include <linux/input/sweep2wake.h>
+#endif
 
 //register address
 #define FT5X0X_REG_DEVIDE_MODE	0x00
@@ -926,7 +929,20 @@ int ft5x06_suspend(struct ft5x06_data *ft5x06)
 {
 	int error = 0;
 
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
+	bool prevent_sleep = false;
+	prevent_sleep = (s2w_switch > 0);
+#endif
+
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
+	if (prevent_sleep)
+		enable_irq_wake(ft5x06->irq);
+	else {
+#endif
 	disable_irq(ft5x06->irq);
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
+    }
+#endif
 	mutex_lock(&ft5x06->mutex);
 	memset(ft5x06->tracker, 0, sizeof(ft5x06->tracker));
 
@@ -945,6 +961,11 @@ int ft5x06_resume(struct ft5x06_data *ft5x06)
 {
 	struct ft5x06_ts_platform_data *pdata = ft5x06->dev->platform_data;
 
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
+	bool prevent_sleep = false;
+	prevent_sleep = (s2w_switch > 0);
+#endif
+
 	mutex_lock(&ft5x06->mutex);
 
 	/* reset device */
@@ -957,6 +978,11 @@ int ft5x06_resume(struct ft5x06_data *ft5x06)
 				NOISE_FILTER_DELAY);
 	ft5x06->in_suspend = false;
 	mutex_unlock(&ft5x06->mutex);
+#if defined(CONFIG_TOUCHSCREEN_SWEEP2WAKE)
+	if (!prevent_sleep)
+		disable_irq_wake(ft5x06->irq);
+	else
+#endif
 	enable_irq(ft5x06->irq);
 
 	return 0;
