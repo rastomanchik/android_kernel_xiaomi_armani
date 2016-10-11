@@ -30,7 +30,6 @@
  *
  */
 
-#define REALLY_WANT_TRACEPOINTS
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/mm.h>
@@ -42,8 +41,6 @@
 #include <linux/delay.h>
 #include <linux/swap.h>
 #include <linux/fs.h>
-
-#include <trace/events/memkill.h>
 
 #ifdef CONFIG_HIGHMEM
 #define _ZONE ZONE_HIGHMEM
@@ -442,30 +439,8 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 			     p->pid, p->comm, oom_score_adj, tasksize);
 	}
 	if (selected) {
-		int i, j;
-		char zinfo[ZINFO_LENGTH];
-		char *p = zinfo;
-		lowmem_print(1, "send sigkill to %d (%s), adj %d, size %d\n",
-			     selected->pid, selected->comm,
-			     selected_oom_score_adj, selected_tasksize);
 		lowmem_deathpending_timeout = jiffies + HZ;
 
-		/* Due to MotoCare parser can't handle unfixed column,
-		 * show all zones info even its free & file are zero.
-		 * it will show as the following examples:
-		 *   0:0:756:1127 0:1:0:0 0:2:0:0
-		 *   0:0:767:322 0:1:152:2364 0:2:0:0
-		 */
-		for (i = 0; i < MAX_NUMNODES; i++)
-			for (j = 0; j < MAX_NR_ZONES; j++)
-				p += snprintf(p, ZINFO_DIGITS,
-					"%d:%d:%lu:%lu ", i, j,
-					zall[i][j].free,
-					zall[i][j].file);
-
-		trace_lmk_kill(selected->pid, selected->comm,
-				selected_oom_score_adj, selected_tasksize,
-				min_score_adj, sc->gfp_mask, zinfo);
 		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		send_sig(SIGKILL, selected, 0);
 		rem -= selected_tasksize;
