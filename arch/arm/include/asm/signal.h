@@ -129,8 +129,6 @@ struct sigaction {
 };
 #define __ARCH_HAS_SA_RESTORER
 
-#define __ARCH_HAS_SA_RESTORER
-
 struct k_sigaction {
 	struct sigaction sa;
 };
