@@ -27,14 +27,12 @@
 #include <linux/bio.h>
 #include <linux/blkdev.h>
 #include <linux/bitops.h>
-#include <trace/events/jbd2.h>
 
 /*
  * Default IO end handler for temporary BJ_IO buffer_heads.
  */
 static void journal_end_buffer_io_sync(struct buffer_head *bh, int uptodate)
 {
-	BUFFER_TRACE(bh, "");
 	if (uptodate)
 		set_buffer_uptodate(bh);
 	else
@@ -129,7 +127,6 @@ static int journal_submit_commit_record(journal_t *journal,
 		tmp->h_chksum[0] 	= cpu_to_be32(crc32_sum);
 	}
 
-	JBUFFER_TRACE(descriptor, "submit commit block");
 	lock_buffer(bh);
 	clear_buffer_dirty(bh);
 	set_buffer_uptodate(bh);
@@ -212,7 +209,6 @@ static int journal_submit_data_buffers(journal_t *journal,
 		 * block allocation  with delalloc. We need to write
 		 * only allocated blocks here.
 		 */
-		trace_jbd2_submit_inode_data(jinode->i_vfs_inode);
 		err = journal_submit_inode_data_buffers(mapping);
 		if (!ret)
 			ret = err;
@@ -365,14 +361,12 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	commit_transaction = journal->j_running_transaction;
 	J_ASSERT(commit_transaction->t_state == T_RUNNING);
 
-	trace_jbd2_start_commit(journal, commit_transaction);
 	jbd_debug(1, "JBD2: starting commit of transaction %d\n",
 			commit_transaction->t_tid);
 
 	write_lock(&journal->j_state_lock);
 	commit_transaction->t_state = T_LOCKED;
 
-	trace_jbd2_commit_locking(journal, commit_transaction);
 	stats.run.rs_wait = commit_transaction->t_max_wait;
 	stats.run.rs_locked = jiffies;
 	stats.run.rs_running = jbd2_time_diff(commit_transaction->t_start,
@@ -416,7 +410,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	 */
 	while (commit_transaction->t_reserved_list) {
 		jh = commit_transaction->t_reserved_list;
-		JBUFFER_TRACE(jh, "reserved, unused: refile");
 		/*
 		 * A jbd2_journal_get_undo_access()+jbd2_journal_release_buffer() may
 		 * leave undo-committed data.
@@ -438,7 +431,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	 * frees some memory
 	 */
 	spin_lock(&journal->j_list_lock);
-	__jbd2_journal_clean_checkpoint_list(journal);
+	__jbd2_journal_clean_checkpoint_list(journal, false);
 	spin_unlock(&journal->j_list_lock);
 
 	jbd_debug(3, "JBD2: commit phase 1\n");
@@ -454,7 +447,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	 */
 	jbd2_journal_switch_revoke_table(journal);
 
-	trace_jbd2_commit_flushing(journal, commit_transaction);
 	stats.run.rs_flushing = jiffies;
 	stats.run.rs_locked = jbd2_time_diff(stats.run.rs_locked,
 					     stats.run.rs_flushing);
@@ -493,7 +485,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 	commit_transaction->t_state = T_COMMIT;
 	write_unlock(&journal->j_state_lock);
 
-	trace_jbd2_commit_logging(journal, commit_transaction);
 	stats.run.rs_logging = jiffies;
 	stats.run.rs_flushing = jbd2_time_diff(stats.run.rs_flushing,
 					       stats.run.rs_logging);
@@ -519,7 +510,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 
 		if (is_journal_aborted(journal)) {
 			clear_buffer_jbddirty(jh2bh(jh));
-			JBUFFER_TRACE(jh, "journal is aborting: refile");
 			jbd2_buffer_abort_trigger(jh,
 						  jh->b_frozen_data ?
 						  jh->b_frozen_triggers :
@@ -567,7 +557,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 
 			/* Record it so that we can wait for IO
                            completion later */
-			BUFFER_TRACE(bh, "ph3: file as descriptor");
 			jbd2_journal_file_buffer(descriptor, commit_transaction,
 					BJ_LogCtl);
 		}
@@ -606,7 +595,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
 		 * We need to clean this up before we release new_bh
 		 * (which is of type BJ_IO)
 		 */
-		JBUFFER_TRACE(jh, "ph3: write metadata");
 		flags = jbd2_journal_write_metadata_buffer(commit_transaction,
 						      jh, &new_jh, blocknr);
 		if (flags < 0) {
@@ -771,14 +759,12 @@ wait_for_iobuf:
 
 		clear_buffer_jwrite(bh);
 
-		JBUFFER_TRACE(jh, "ph4: unfile after journal write");
 		jbd2_journal_unfile_buffer(journal, jh);
 
 		/*
 		 * ->t_iobuf_list should contain only dummy buffer_heads
 		 * which were created by jbd2_journal_write_metadata_buffer().
 		 */
-		BUFFER_TRACE(bh, "dumping temporary bh");
 		jbd2_journal_put_journal_head(jh);
 		__brelse(bh);
 		J_ASSERT_BH(bh, atomic_read(&bh->b_count) == 0);
@@ -795,7 +781,6 @@ wait_for_iobuf:
                    to remember it against this transaction so that when
                    we finally commit, we can do any checkpointing
                    required. */
-		JBUFFER_TRACE(jh, "file as BJ_Forget");
 		jbd2_journal_file_buffer(jh, commit_transaction, BJ_Forget);
 		/*
 		 * Wake up any transactions which were waiting for this IO to
@@ -805,7 +790,6 @@ wait_for_iobuf:
 		 */
 		smp_mb();
 		wake_up_bit(&bh->b_state, BH_Unshadow);
-		JBUFFER_TRACE(jh, "brelse shadowed buffer");
 		__brelse(bh);
 	}
 
@@ -830,7 +814,6 @@ wait_for_iobuf:
 		if (unlikely(!buffer_uptodate(bh)))
 			err = -EIO;
 
-		BUFFER_TRACE(bh, "ph5: control buffer writeout done: unfile");
 		clear_buffer_jwrite(bh);
 		jbd2_journal_unfile_buffer(journal, jh);
 		jbd2_journal_put_journal_head(jh);
@@ -939,7 +922,6 @@ restart_loop:
 		spin_lock(&journal->j_list_lock);
 		cp_transaction = jh->b_cp_transaction;
 		if (cp_transaction) {
-			JBUFFER_TRACE(jh, "remove from old cp transaction");
 			cp_transaction->t_chp_stats.cs_dropped++;
 			__jbd2_journal_remove_checkpoint(jh);
 		}
@@ -964,7 +946,6 @@ restart_loop:
 		}
 
 		if (buffer_jbddirty(bh)) {
-			JBUFFER_TRACE(jh, "add to new checkpointing trans");
 			__jbd2_journal_insert_checkpoint(jh, commit_transaction);
 			if (is_journal_aborted(journal))
 				clear_buffer_jbddirty(bh);
@@ -982,7 +963,6 @@ restart_loop:
 			if (!jh->b_next_transaction)
 				try_to_free = 1;
 		}
-		JBUFFER_TRACE(jh, "refile or unfile buffer");
 		__jbd2_journal_refile_buffer(jh);
 		jbd_unlock_bh_state(bh);
 		if (try_to_free)
@@ -1026,8 +1006,6 @@ restart_loop:
 	stats.ts_tid = commit_transaction->t_tid;
 	stats.run.rs_handle_count =
 		atomic_read(&commit_transaction->t_handle_count);
-	trace_jbd2_run_stats(journal->j_fs_dev->bd_dev,
-			     commit_transaction->t_tid, &stats.run);
 
 	/*
 	 * Calculate overall stats
@@ -1077,13 +1055,13 @@ restart_loop:
 				commit_transaction;
 	}
 	spin_unlock(&journal->j_list_lock);
+
 	/* Drop all spin_locks because commit_callback may be block.
 	 * __journal_remove_checkpoint() can not destroy transaction
 	 * under us because it is not marked as T_FINISHED yet */
 	if (journal->j_commit_callback)
 		journal->j_commit_callback(journal, commit_transaction);
 
-	trace_jbd2_end_commit(journal, commit_transaction);
 	jbd_debug(1, "JBD2: commit %d complete, head %d\n",
 		  journal->j_commit_sequence, journal->j_tail_sequence);
 

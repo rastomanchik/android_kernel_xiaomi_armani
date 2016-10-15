@@ -21,7 +21,8 @@
    SOFTWARE IS DISCLAIMED.
 */
 
-#define MGMT_INDEX_NONE			0xFFFF
+#define MGMT_INDEX_NONE			    0xFFFF
+#define MGMT_STATUS_RFKILLED		0x12
 
 struct mgmt_hdr {
 	__le16 opcode;

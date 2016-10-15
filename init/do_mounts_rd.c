@@ -10,7 +10,6 @@
 #include <linux/slab.h>
 
 #include "do_mounts.h"
-#include "../fs/squashfs/squashfs_fs.h"
 
 #include <linux/decompress/generic.h>
 
@@ -105,16 +104,6 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 		       "RAMDISK: cramfs filesystem found at block %d\n",
 		       start_block);
 		nblocks = (cramfsb->size + BLOCK_SIZE - 1) >> BLOCK_SIZE_BITS;
-		goto done;
-	}
-
-	/* squashfs is at block zero too */
-	if (le32_to_cpu(squashfsb->s_magic) == SQUASHFS_MAGIC) {
-		printk(KERN_NOTICE
-		       "RAMDISK: squashfs filesystem found at block %d\n",
-		       start_block);
-		nblocks = (le64_to_cpu(squashfsb->bytes_used) + BLOCK_SIZE - 1)
-			 >> BLOCK_SIZE_BITS;
 		goto done;
 	}
 

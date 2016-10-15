@@ -36,9 +36,13 @@
 #include <asm/tls.h>
 #include <asm/system_misc.h>
 
-#include <trace/events/exception.h>
-
-static const char *handler[]= { "prefetch abort", "data abort", "address exception", "interrupt" };
+static const char *handler[]= {
+	"prefetch abort",
+	"data abort",
+	"address exception",
+	"interrupt",
+	"undefined instruction",
+};
 
 void *vectors_page;
 
@@ -54,34 +58,6 @@ __setup("user_debug=", user_debug_setup);
 #endif
 
 static void dump_mem(const char *, const char *, unsigned long, unsigned long);
-
-void dump_backtrace_entry(unsigned long where, unsigned long from, unsigned long frame)
-{
-#ifdef CONFIG_KALLSYMS
-	printk("[<%08lx>] (%pS) from [<%08lx>] (%pS)\n", where, (void *)where, from, (void *)from);
-#else
-	printk("Function entered at [<%08lx>] from [<%08lx>]\n", where, from);
-#endif
-
-	if (in_exception_text(where))
-		dump_mem("", "Exception stack", frame + 4, frame + 4 + sizeof(struct pt_regs));
-}
-
-#ifndef CONFIG_ARM_UNWIND
-/*
- * Stack pointers should always be within the kernels view of
- * physical memory.  If it is not there, then we can't dump
- * out any information relating to the stack.
- */
-static int verify_stack(unsigned long sp)
-{
-	if (sp < PAGE_OFFSET ||
-	    (sp > (unsigned long)high_memory && high_memory != NULL))
-		return -EFAULT;
-
-	return 0;
-}
-#endif
 
 /*
  * Dump out the contents of some memory nicely...
@@ -163,58 +139,14 @@ static void dump_instr(const char *lvl, struct pt_regs *regs)
 	set_fs(fs);
 }
 
-#ifdef CONFIG_ARM_UNWIND
-static inline void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
-{
-	unwind_backtrace(regs, tsk);
-}
-#else
-static void dump_backtrace(struct pt_regs *regs, struct task_struct *tsk)
-{
-	unsigned int fp, mode;
-	int ok = 1;
-
-	printk("Backtrace: ");
-
-	if (!tsk)
-		tsk = current;
-
-	if (regs) {
-		fp = regs->ARM_fp;
-		mode = processor_mode(regs);
-	} else if (tsk != current) {
-		fp = thread_saved_fp(tsk);
-		mode = 0x10;
-	} else {
-		asm("mov %0, fp" : "=r" (fp) : : "cc");
-		mode = 0x10;
-	}
-
-	if (!fp) {
-		printk("no frame pointer");
-		ok = 0;
-	} else if (verify_stack(fp)) {
-		printk("invalid frame pointer 0x%08x", fp);
-		ok = 0;
-	} else if (fp < (unsigned long)end_of_stack(tsk))
-		printk("frame pointer underflow");
-	printk("\n");
-
-	if (ok)
-		c_backtrace(fp, mode);
-}
-#endif
-
 void dump_stack(void)
 {
-	dump_backtrace(NULL, NULL);
 }
 
 EXPORT_SYMBOL(dump_stack);
 
 void show_stack(struct task_struct *tsk, unsigned long *sp)
 {
-	dump_backtrace(NULL, tsk);
 	barrier();
 }
 
@@ -256,7 +188,6 @@ static int __die(const char *str, int err, struct thread_info *thread, struct pt
 	if (!user_mode(regs) || in_interrupt()) {
 		dump_mem(KERN_EMERG, "Stack: ", regs->ARM_sp,
 			 THREAD_SIZE + (unsigned long)task_stack_page(tsk));
-		dump_backtrace(regs, tsk);
 		dump_instr(KERN_EMERG, regs);
 	}
 
@@ -371,17 +302,9 @@ static int call_undef_hook(struct pt_regs *regs, unsigned int instr)
 
 asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 {
-	unsigned int correction = thumb_mode(regs) ? 2 : 4;
 	unsigned int instr;
 	siginfo_t info;
 	void __user *pc;
-
-	/*
-	 * According to the ARM ARM, PC is 2 or 4 bytes ahead,
-	 * depending whether we're in Thumb mode or not.
-	 * Correct this offset.
-	 */
-	regs->ARM_pc -= correction;
 
 	pc = (void __user *)instruction_pointer(regs);
 
@@ -397,22 +320,23 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
 #endif
 			instr = *(u32 *) pc;
 	} else if (thumb_mode(regs)) {
-		get_user(instr, (u16 __user *)pc);
+		if (get_user(instr, (u16 __user *)pc))
+			goto die_sig;
 		if (is_wide_instruction(instr)) {
 			unsigned int instr2;
-			get_user(instr2, (u16 __user *)pc+1);
+			if (get_user(instr2, (u16 __user *)pc+1))
+				goto die_sig;
 			instr <<= 16;
 			instr |= instr2;
 		}
-	} else {
-		get_user(instr, (u32 __user *)pc);
+	} else if (get_user(instr, (u32 __user *)pc)) {
+		goto die_sig;
 	}
 
 	if (call_undef_hook(regs, instr) == 0)
 		return;
 
-	trace_undef_instr(regs, (void *)pc);
-
+die_sig:
 #ifdef CONFIG_DEBUG_USER
 	if (user_debug & UDBG_UNDEFINED) {
 		printk(KERN_INFO "%s (%d): undefined instruction: pc=%p\n",
@@ -531,7 +455,6 @@ asmlinkage int arm_syscall(int no, struct pt_regs *regs)
 
 	case NR(breakpoint): /* SWI BREAK_POINT */
 		regs->ARM_pc -= thumb_mode(regs) ? 2 : 4;
-		ptrace_break(current, regs);
 		return regs->ARM_r0;
 
 	/*
@@ -654,7 +577,6 @@ asmlinkage int arm_syscall(int no, struct pt_regs *regs)
 		dump_instr("", regs);
 		if (user_mode(regs)) {
 			__show_regs(regs);
-			c_backtrace(regs->ARM_fp, processor_mode(regs));
 		}
 	}
 #endif

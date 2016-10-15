@@ -32,8 +32,6 @@
 #include "ext4.h"
 #include "ext4_jbd2.h"
 
-#include <trace/events/ext4.h>
-
 static void dump_completed_IO(struct inode * inode)
 {
 #ifdef	EXT4FS_DEBUG
@@ -216,8 +214,6 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 
 	J_ASSERT(ext4_journal_current_handle() == NULL);
 
-	trace_ext4_sync_file_enter(file, datasync);
-
 	ret = filemap_write_and_wait_range(inode->i_mapping, start, end);
 	if (ret)
 		return ret;
@@ -260,12 +256,10 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 	if (journal->j_flags & JBD2_BARRIER &&
 	    !jbd2_trans_will_send_data_barrier(journal, commit_tid))
 		needs_barrier = true;
-	jbd2_log_start_commit(journal, commit_tid);
-	ret = jbd2_log_wait_commit(journal, commit_tid);
+	ret = jbd2_complete_transaction(journal, commit_tid);
 	if (needs_barrier)
 		blkdev_issue_flush(inode->i_sb->s_bdev, GFP_KERNEL, NULL);
  out:
 	mutex_unlock(&inode->i_mutex);
-	trace_ext4_sync_file_exit(inode, ret);
 	return ret;
 }

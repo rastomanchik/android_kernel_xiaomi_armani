@@ -124,23 +124,13 @@ config USB
 
 source "drivers/usb/core/Kconfig"
 
-source "drivers/usb/dwc3/Kconfig"
-
 source "drivers/usb/mon/Kconfig"
 
-source "drivers/usb/wusbcore/Kconfig"
-
 source "drivers/usb/host/Kconfig"
-
-source "drivers/usb/musb/Kconfig"
-
-source "drivers/usb/renesas_usbhs/Kconfig"
 
 source "drivers/usb/class/Kconfig"
 
 source "drivers/usb/storage/Kconfig"
-
-source "drivers/usb/image/Kconfig"
 
 comment "USB port drivers"
 	depends on USB
@@ -174,11 +164,7 @@ config USB_USS720
 	  To compile this driver as a module, choose M here: the
 	  module will be called uss720.
 
-source "drivers/usb/serial/Kconfig"
-
 source "drivers/usb/misc/Kconfig"
-
-source "drivers/usb/atm/Kconfig"
 
 source "drivers/usb/gadget/Kconfig"
 

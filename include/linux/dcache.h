@@ -189,8 +189,11 @@ struct dentry_operations {
 #define DCACHE_NEED_AUTOMOUNT	0x20000	/* handle automount on this dir */
 #define DCACHE_MANAGE_TRANSIT	0x40000	/* manage transit from this dirent */
 #define DCACHE_NEED_LOOKUP	0x80000 /* dentry requires i_op->lookup */
+
 #define DCACHE_MANAGED_DENTRY \
 	(DCACHE_MOUNTED|DCACHE_NEED_AUTOMOUNT|DCACHE_MANAGE_TRANSIT)
+
+#define DCACHE_DENTRY_KILLED	0x100000
 
 #define DCACHE_ENCRYPTED_WITH_KEY 0x04000000 /* dir is encrypted with a valid key */
 
