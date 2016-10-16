@@ -14,7 +14,6 @@
 #include <linux/suspend.h>
 #include <linux/seq_file.h>
 #include <linux/debugfs.h>
-#include <trace/events/power.h>
 #include <linux/moduleparam.h>
 
 static bool enable_wlan_rx_wake_ws = true;
@@ -445,7 +444,6 @@ static void wakeup_source_deactivate(struct wakeup_source *ws)
          * couter of wakeup events in progress simultaneously.
          */
         cec = atomic_add_return(MAX_IN_PROGRESS, &combined_event_count);
-        trace_wakeup_source_deactivate(ws->name, cec);
 
         split_counters(&cnt, &inpr);
         if (!inpr && waitqueue_active(&wakeup_count_wait_queue))
@@ -515,7 +513,6 @@ static void wakeup_source_activate(struct wakeup_source *ws)
 	/* Increment the counter of events in progress. */
 	cec = atomic_inc_return(&combined_event_count);
 
-	trace_wakeup_source_activate(ws->name, cec);
 }
 
 /**
