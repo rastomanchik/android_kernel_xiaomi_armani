@@ -2667,7 +2667,7 @@ get_prop_capacity(struct qpnp_chg_chip *chip)
 		}
 
 		chip->prev_soc = soc;
-		pr_info("final report:%d\n", soc);
+		pr_debug("final report:%d\n", soc);
 		return soc;
 	} else {
 		pr_debug("No BMS supply registered return 50\n");

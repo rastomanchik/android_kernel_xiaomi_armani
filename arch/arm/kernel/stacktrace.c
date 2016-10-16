@@ -4,7 +4,7 @@
 
 #include <asm/stacktrace.h>
 
-//#if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND)
+#if defined(CONFIG_FRAME_POINTER) && !defined(CONFIG_ARM_UNWIND)
 /*
  * Unwind the current stack frame and store the new register values in the
  * structure passed as argument. Unwinding is equivalent to a function return,
@@ -41,7 +41,7 @@ int notrace unwind_frame(struct stackframe *frame)
 
 	return 0;
 }
-//#endif
+#endif
 
 void notrace walk_stackframe(struct stackframe *frame,
 		     int (*fn)(struct stackframe *, void *), void *data)

@@ -23,6 +23,7 @@
 #include <linux/mutex.h>
 #include <linux/pm.h>
 #include <linux/pm_runtime.h>
+#include <linux/resume-trace.h>
 #include <linux/interrupt.h>
 #include <linux/sched.h>
 #include <linux/async.h>
@@ -412,6 +413,9 @@ static int device_resume_noirq(struct device *dev, pm_message_t state)
 	char *info = NULL;
 	int error = 0;
 
+	TRACE_DEVICE(dev);
+	TRACE_RESUME(0);
+
 	if (dev->pm_domain) {
 		info = "noirq power domain ";
 		callback = pm_noirq_op(&dev->pm_domain->ops, state);
@@ -433,6 +437,7 @@ static int device_resume_noirq(struct device *dev, pm_message_t state)
 
 	error = dpm_run_callback(callback, dev, state, info);
 
+	TRACE_RESUME(error);
 	return error;
 }
 
@@ -510,6 +515,9 @@ static int device_resume_early(struct device *dev, pm_message_t state)
 	char *info = NULL;
 	int error = 0;
 
+	TRACE_DEVICE(dev);
+	TRACE_RESUME(0);
+
 	if (dev->pm_domain) {
 		info = "early power domain ";
 		callback = pm_late_early_op(&dev->pm_domain->ops, state);
@@ -531,6 +539,7 @@ static int device_resume_early(struct device *dev, pm_message_t state)
 
 	error = dpm_run_callback(callback, dev, state, info);
 
+	TRACE_RESUME(error);
 	return error;
 }
 
@@ -588,6 +597,9 @@ static int device_resume(struct device *dev, pm_message_t state, bool async)
 	pm_callback_t callback = NULL;
 	char *info = NULL;
 	int error = 0;
+
+	TRACE_DEVICE(dev);
+	TRACE_RESUME(0);
 
 	dpm_wait(dev->parent, async);
 	device_lock(dev);
@@ -650,6 +662,9 @@ static int device_resume(struct device *dev, pm_message_t state, bool async)
 
  Unlock:
 	device_unlock(dev);
+	complete_all(&dev->power.completion);
+
+	TRACE_RESUME(error);
 
 	return error;
 }
@@ -667,7 +682,8 @@ static void async_resume(void *data, async_cookie_t cookie)
 
 static bool is_async(struct device *dev)
 {
-	return dev->power.async_suspend && pm_async_enabled;
+	return dev->power.async_suspend && pm_async_enabled
+		&& !pm_trace_is_enabled();
 }
 
 /**
@@ -953,6 +969,7 @@ static int device_suspend_late(struct device *dev, pm_message_t state)
 {
 	pm_callback_t callback = NULL;
 	char *info = NULL;
+	int error = 0;
 
 	if (dev->pm_domain) {
 		info = "late power domain ";
@@ -973,7 +990,11 @@ static int device_suspend_late(struct device *dev, pm_message_t state)
 		callback = pm_late_early_op(dev->driver->pm, state);
 	}
 
-	return dpm_run_callback(callback, dev, state, info);
+	error = dpm_run_callback(callback, dev, state, info);
+	if (error)
+		pm_runtime_enable(dev);
+
+	return error;
 }
 
 /**
@@ -1330,6 +1351,9 @@ int dpm_prepare(pm_message_t state)
 				error = 0;
 				continue;
 			}
+			printk(KERN_INFO "PM: Device %s not prepared "
+				"for power transition: code %d\n",
+				dev_name(dev), error);
 			put_device(dev);
 			break;
 		}
