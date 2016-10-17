@@ -3039,17 +3039,6 @@ int adreno_idle(struct kgsl_device *device)
 
 	} while (time_before(jiffies, wait));
 
-	/*
-	 * Under rare conditions, preemption can cause the while loop to exit
-	 * without checking if the gpu is idle. check one last time before we
-	 * return failure.
-	 */
-	if (adreno_gpu_fault(adreno_dev) != 0)
-			return -EDEADLK;
-
-	if (adreno_isidle(device))
-			return 0;
-
 	return -ETIMEDOUT;
 }
 
