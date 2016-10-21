@@ -9,7 +9,7 @@ export EABI_PATCH=~/cm13/prebuilts/gcc/linux-x86/arm/arm-cortex-linux-gnueabi-li
 #export CROSS_COMPILE=~/cm13/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-
 #export EABI_PATCH=~/cm13/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin
 
-make clean && make mrproper
+#make clean && make mrproper
 
 echo "****Сборка ядра****"
 make cyanogenmod_armani_defconfig

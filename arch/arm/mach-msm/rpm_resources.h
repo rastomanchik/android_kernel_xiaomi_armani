@@ -17,7 +17,7 @@
 #include <mach/rpm.h>
 #include <linux/notifier.h>
 #include "pm.h"
-#include "test-lpm.h"
+//#include "test-lpm.h"
 
 enum {
 	MSM_RPMRS_ID_PXO_CLK = 0,
