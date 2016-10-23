@@ -578,7 +578,7 @@ static void __program_context(struct msm_iommu_drvdata *iommu_drvdata,
 
 	pn = pgtable >> CB_TTBR0_ADDR_SHIFT;
 	SET_TTBCR(base, ctx, 0);
-	SET_CB_TTBR0_ADDR(base, ctx, pn);
+//	SET_CB_TTBR0_ADDR(base, ctx, pn);
 
 	/* Enable context fault interrupt */
 	SET_CB_SCTLR_CFIE(base, ctx, 1);

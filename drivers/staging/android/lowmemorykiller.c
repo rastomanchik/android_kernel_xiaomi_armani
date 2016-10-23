@@ -442,8 +442,8 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	if (selected) {
 		lowmem_deathpending_timeout = jiffies + HZ;
 
-		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		send_sig(SIGKILL, selected, 0);
+		set_tsk_thread_flag(selected, TIF_MEMDIE);
 		rem -= selected_tasksize;
 		rcu_read_unlock();
 		/* give the system time to free up the memory */
@@ -451,8 +451,6 @@ static int lowmem_shrink(struct shrinker *s, struct shrink_control *sc)
 	} else
 		rcu_read_unlock();
 
-	lowmem_print(4, "lowmem_shrink %lu, %x, return %d\n",
-		     nr_to_scan, sc->gfp_mask, rem);
 	mutex_unlock(&scan_mutex);
 	return rem;
 }

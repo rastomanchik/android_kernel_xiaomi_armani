@@ -103,11 +103,6 @@ static const u16 wm8991_reg_defs[] = {
 
 #define wm8991_reset(c) snd_soc_write(c, WM8991_RESET, 0)
 
-static const unsigned int rec_mix_tlv[] = {
-	TLV_DB_RANGE_HEAD(1),
-	0, 7, TLV_DB_LINEAR_ITEM(-1500, 600),
-};
-
 static const unsigned int in_pga_tlv[] = {
 	TLV_DB_RANGE_HEAD(1),
 	0, 0x1F, TLV_DB_LINEAR_ITEM(-1650, 3000),
@@ -123,10 +118,17 @@ static const unsigned int out_pga_tlv[] = {
 	0, 127, TLV_DB_LINEAR_ITEM(-7300, 600),
 };
 
+/* defined but not used
 static const unsigned int out_omix_tlv[] = {
 	TLV_DB_RANGE_HEAD(1),
 	0, 7, TLV_DB_LINEAR_ITEM(-600, 0),
 };
+
+static const unsigned int rec_mix_tlv[] = {
+	TLV_DB_RANGE_HEAD(1),
+	0, 7, TLV_DB_LINEAR_ITEM(-1500, 600),
+};
+*/
 
 static const unsigned int out_dac_tlv[] = {
 	TLV_DB_RANGE_HEAD(1),
@@ -523,12 +525,14 @@ static const struct snd_kcontrol_new wm8991_dapm_ainrmux_controls =
 	SOC_DAPM_ENUM("Route", wm8991_ainrmux_enum);
 
 /* RXVOICE */
+/* defined but not used
 static const struct snd_kcontrol_new wm8991_dapm_rxvoice_controls[] = {
 	SOC_DAPM_SINGLE_TLV("LIN4RXN", WM8991_INPUT_MIXER5, WM8991_LR4BVOL_SHIFT,
 		WM8991_LR4BVOL_MASK, 0, in_mix_tlv),
 	SOC_DAPM_SINGLE_TLV("RIN4RXP", WM8991_INPUT_MIXER6, WM8991_RL4BVOL_SHIFT,
 		WM8991_RL4BVOL_MASK, 0, in_mix_tlv),
 };
+*/
 
 /* LOMIX */
 static const struct snd_kcontrol_new wm8991_dapm_lomix_controls[] = {

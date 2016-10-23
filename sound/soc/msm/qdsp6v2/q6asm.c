@@ -1804,16 +1804,14 @@ static int __q6asm_open_read(struct audio_client *ac,
 	open.mode_flags = 0x0;
 
 	if (ac->perf_mode == LOW_LATENCY_PCM_MODE) {
-		open.mode_flags |= ASM_LOW_LATENCY_STREAM_SESSION <<
-				ASM_SHIFT_STREAM_PERF_MODE_FLAG_IN_OPEN_READ;
+		open.mode_flags |= ASM_LOW_LATENCY_STREAM_SESSION;
 	} else {
-		open.mode_flags |= ASM_LEGACY_STREAM_SESSION <<
-				ASM_SHIFT_STREAM_PERF_MODE_FLAG_IN_OPEN_READ;
+		open.mode_flags |= ASM_LEGACY_STREAM_SESSION;
 	}
 
 	switch (format) {
 	case FORMAT_LINEAR_PCM:
-		open.mode_flags |= 0x00;
+		open.mode_flags |= 0x0;
 		open.enc_cfg_id = ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2;
 		break;
 	case FORMAT_MPEG4_AAC:

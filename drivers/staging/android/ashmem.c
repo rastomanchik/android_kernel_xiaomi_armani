@@ -901,8 +901,6 @@ static int __init ashmem_init(void)
 
 	register_shrinker(&ashmem_shrinker);
 
-	printk(KERN_INFO "ashmem: initialized\n");
-
 	return 0;
 }
 
@@ -919,7 +917,6 @@ static void __exit ashmem_exit(void)
 	kmem_cache_destroy(ashmem_range_cachep);
 	kmem_cache_destroy(ashmem_area_cachep);
 
-	printk(KERN_INFO "ashmem: unloaded\n");
 }
 
 module_init(ashmem_init);

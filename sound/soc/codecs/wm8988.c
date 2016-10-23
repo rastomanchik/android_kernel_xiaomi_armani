@@ -270,11 +270,14 @@ static const struct soc_enum wm8988_lline_enum =
 static const struct snd_kcontrol_new wm8988_left_line_controls =
 	SOC_DAPM_VALUE_ENUM("Route", wm8988_lline_enum);
 
+/* defined but not used
 static const struct soc_enum wm8988_rline_enum =
 	SOC_VALUE_ENUM_SINGLE(WM8988_ROUTM1, 0, 7,
 			      ARRAY_SIZE(wm8988_line_texts),
 			      wm8988_line_texts,
 			      wm8988_line_values);
+*/
+
 static const struct snd_kcontrol_new wm8988_right_line_controls =
 	SOC_DAPM_VALUE_ENUM("Route", wm8988_lline_enum);
 

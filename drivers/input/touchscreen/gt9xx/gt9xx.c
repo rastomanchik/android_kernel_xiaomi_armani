@@ -1536,7 +1536,7 @@ static ssize_t gtp_fw_upgrade_store(struct device *dev,
 	if (size > 2)
 		return -EINVAL;
 
-	if (sscanf(buf, "%u", &val) != 1);
+	if (sscanf(buf, "%u", &val) != 1)
 		return -EINVAL;
 
 	if (ts->gtp_is_suspend) {
@@ -1574,7 +1574,7 @@ static ssize_t gtp_force_fw_upgrade_store(struct device *dev,
 	if (size > 2)
 		return -EINVAL;
 
-	if (sscanf(buf, "%u", &val) != 1);
+	if (sscanf(buf, "%u", &val) != 1)
 		return -EINVAL;
 
 	if (ts->gtp_is_suspend) {

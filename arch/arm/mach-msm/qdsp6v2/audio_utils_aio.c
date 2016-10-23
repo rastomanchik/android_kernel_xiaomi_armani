@@ -31,6 +31,47 @@
 #endif /*CONFIG_USE_DEV_CTRL_VOLUME*/
 
 
+#ifdef CONFIG_DEBUG_FS
+ssize_t audio_aio_debug_open(struct inode *inode, struct file *file)
+{
+	file->private_data = inode->i_private;
+	return 0;
+}
+
+ssize_t audio_aio_debug_read(struct file *file, char __user *buf,
+				size_t count, loff_t *ppos)
+{
+	const int debug_bufmax = 4096;
+	static char buffer[4096];
+	int n = 0;
+	struct q6audio_aio *audio = file->private_data;
+
+	mutex_lock(&audio->lock);
+	n = scnprintf(buffer, debug_bufmax, "opened %d\n", audio->opened);
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"enabled %d\n", audio->enabled);
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"stopped %d\n", audio->stopped);
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"feedback %d\n", audio->feedback);
+	mutex_unlock(&audio->lock);
+	/* Following variables are only useful for debugging when
+	 * when playback halts unexpectedly. Thus, no mutual exclusion
+	 * enforced
+	 */
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"wflush %d\n", audio->wflush);
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"rflush %d\n", audio->rflush);
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"inqueue empty %d\n", list_empty(&audio->in_queue));
+	n += scnprintf(buffer + n, debug_bufmax - n,
+			"outqueue empty %d\n", list_empty(&audio->out_queue));
+	buffer[n] = 0;
+	return simple_read_from_buffer(buf, count, ppos, buffer, n);
+}
+#endif
+
 int insert_eos_buf(struct q6audio_aio *audio,
 		struct audio_aio_buffer_node *buf_node)
 {
@@ -509,6 +550,11 @@ int audio_aio_release(struct inode *inode, struct file *file)
 	mutex_destroy(&audio->write_lock);
 	mutex_destroy(&audio->get_event_lock);
 	unregister_volume_listener(audio);
+
+#ifdef CONFIG_DEBUG_FS
+	if (audio->dentry)
+		debugfs_remove(audio->dentry);
+#endif
 	kfree(audio->codec_cfg);
 	kfree(audio);
 	return 0;

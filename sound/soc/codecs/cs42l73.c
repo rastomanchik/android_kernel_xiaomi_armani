@@ -379,12 +379,13 @@ static const struct soc_enum xsp_output_mux_enum =
 	SOC_ENUM_SINGLE(CS42L73_MIXERCTL, 4,
 		ARRAY_SIZE(cs42l73_spo_mixer_text), cs42l73_spo_mixer_text);
 
+/* defined but not used
 static const struct snd_kcontrol_new vsp_output_mux =
 	SOC_DAPM_ENUM("Route", vsp_output_mux_enum);
 
 static const struct snd_kcontrol_new xsp_output_mux =
 	SOC_DAPM_ENUM("Route", xsp_output_mux_enum);
-
+*/
 static const struct snd_kcontrol_new hp_amp_ctl =
 	SOC_DAPM_SINGLE("Switch", CS42L73_PWRCTL3, 0, 1, 1);
 

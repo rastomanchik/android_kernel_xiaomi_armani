@@ -4079,6 +4079,7 @@ wlan_hdd_tdls_config_disable_policy[QCA_WLAN_VENDOR_ATTR_TDLS_DISABLE_MAX +1] =
 
 };
 
+/*
 static const struct nla_policy
 wlan_hdd_tdls_config_state_change_policy[
                     QCA_WLAN_VENDOR_ATTR_TDLS_STATE_MAX +1] =
@@ -4091,6 +4092,7 @@ wlan_hdd_tdls_config_state_change_policy[
                                                 {.type = NLA_S32 },
 
 };
+*/
 
 static const struct nla_policy
 wlan_hdd_tdls_config_get_status_policy[

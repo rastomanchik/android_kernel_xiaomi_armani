@@ -5908,9 +5908,6 @@ tSirRetStatus limSendAddBARsp( tpAniSirGlobal pMac,
         txFlag |= HAL_USE_BD_RATE2_FOR_MANAGEMENT_FRAME;
     }
 
-    MTRACE(macTrace(pMac, TRACE_CODE_TX_MGMT,
-           psessionEntry->peSessionId,
-           pMacHdr->fc.subType));
     halStatus = halTxFrame( pMac,
                             pPacket,
                             (tANI_U16) frameLen,
@@ -5919,23 +5916,19 @@ tSirRetStatus limSendAddBARsp( tpAniSirGlobal pMac,
                             7,//SMAC_SWBD_TX_TID_MGMT_HIGH,
                             limTxComplete,
                             pAddBARspBuffer, txFlag );
-    MTRACE(macTrace(pMac, TRACE_CODE_TX_COMPLETE,
-           psessionEntry->peSessionId,
-           halStatus));
     if( eHAL_STATUS_SUCCESS != halStatus )
     {
-    limLog( pMac, LOGE,
-        FL( "halTxFrame FAILED! Status [%d]" ),
-        halStatus );
+        limLog( pMac, LOGE, FL( "halTxFrame FAILED! Status [%d]" ),
+            halStatus );
 
-    // FIXME - HAL error codes are different from PE error
-    // codes!! And, this routine is returning tSirRetStatus
-    statusCode = eSIR_FAILURE;
-    //Pkt will be freed up by the callback
-    return statusCode;
-  }
-  else
-    return eSIR_SUCCESS;
+        // FIXME - HAL error codes are different from PE error
+        // codes!! And, this routine is returning tSirRetStatus
+        statusCode = eSIR_FAILURE;
+        //Pkt will be freed up by the callback
+        return statusCode;
+    }
+    else
+        return eSIR_SUCCESS;
 
     returnAfterError:
       // Release buffer, if allocated
@@ -6117,10 +6110,7 @@ tSirRetStatus limSendDelBAInd( tpAniSirGlobal pMac,
         txFlag |= HAL_USE_BD_RATE2_FOR_MANAGEMENT_FRAME;
     }
 
-   MTRACE(macTrace(pMac, TRACE_CODE_TX_MGMT,
-          psessionEntry->peSessionId,
-          pMacHdr->fc.subType));
-   halStatus = halTxFrame( pMac,
+    halStatus = halTxFrame( pMac,
                            pPacket,
                            (tANI_U16) frameLen,
                            HAL_TXRX_FRM_802_11_MGMT,
@@ -6128,29 +6118,26 @@ tSirRetStatus limSendDelBAInd( tpAniSirGlobal pMac,
                            7,//SMAC_SWBD_TX_TID_MGMT_HIGH,
                            limTxComplete,
                            pDelBAIndBuffer, txFlag );
-   MTRACE(macTrace(pMac, TRACE_CODE_TX_COMPLETE,
-          psessionEntry->peSessionId,
-          halStatus));
-  if( eHAL_STATUS_SUCCESS != halStatus )
-  {
-    PELOGE(limLog( pMac, LOGE, FL( "halTxFrame FAILED! Status [%d]" ), halStatus );)
-    statusCode = eSIR_FAILURE;
-    //Pkt will be freed up by the callback
-    return statusCode;
-  }
-  else
-    return eSIR_SUCCESS;
+    if( eHAL_STATUS_SUCCESS != halStatus )
+    {
+        PELOGE(limLog( pMac, LOGE, FL( "halTxFrame FAILED! Status [%d]" ), halStatus ););
+        statusCode = eSIR_FAILURE;
+        //Pkt will be freed up by the callback
+        return statusCode;
+    }
+    else
+        return eSIR_SUCCESS;
 
     returnAfterError:
 
-      // Release buffer, if allocated
-      if( NULL != pDelBAIndBuffer )
+    // Release buffer, if allocated
+    if( NULL != pDelBAIndBuffer )
         palPktFree( pMac->hHdd,
             HAL_TXRX_FRM_802_11_MGMT,
             (void *) pDelBAIndBuffer,
             (void *) pPacket );
 
-      return statusCode;
+    return statusCode;
 }
 
 #if defined WLAN_FEATURE_VOWIFI

@@ -148,6 +148,8 @@ static const struct neigh_ops arp_direct_ops = {
 	.connected_output =	neigh_direct_output,
 };
 
+// defined but not used
+/*
 static const struct neigh_ops arp_broken_ops = {
 	.family =		AF_INET,
 	.solicit =		arp_solicit,
@@ -155,6 +157,7 @@ static const struct neigh_ops arp_broken_ops = {
 	.output =		neigh_compat_output,
 	.connected_output =	neigh_compat_output,
 };
+*/
 
 struct neigh_table arp_tbl = {
 	.family		= AF_INET,

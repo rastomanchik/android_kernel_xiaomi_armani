@@ -76,6 +76,8 @@ endif
 
 obj-$(CONFIG_MSM_SYSMON_COMM) += sysmon.o
 
+obj-$(CONFIG_MSM_ENABLE_WDOG_DEBUG_CONTROL) += wdog_debug.o
+
 obj-$(CONFIG_MSM_WATCHDOG_V2) += msm_watchdog_v2.o
 
 obj-$(CONFIG_MSM_MEMORY_DUMP) += msm_memory_dump.o

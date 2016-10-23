@@ -1153,7 +1153,6 @@ config LATENCYTOP
 	  to find out which userspace is blocking on what kernel operations.
 
 source mm/Kconfig.debug
-source kernel/trace/Kconfig
 
 config PROVIDE_OHCI1394_DMA_INIT
 	bool "Remote debugging over FireWire early on boot"

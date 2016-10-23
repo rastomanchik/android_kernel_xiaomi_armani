@@ -331,6 +331,9 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		            -Wno-discarded-array-qualifiers -Wno-bool-compare \
 		            -fno-delete-null-pointer-checks -Wno-logical-not-parentheses
 		        
+# for gcc-6
+KBUILD_CFLAGS   += -Wno-array-bounds
+
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__

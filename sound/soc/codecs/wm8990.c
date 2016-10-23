@@ -115,15 +115,15 @@ static const u16 wm8990_reg[] = {
 
 #define wm8990_reset(c) snd_soc_write(c, WM8990_RESET, 0)
 
-static const DECLARE_TLV_DB_SCALE(rec_mix_tlv, -1500, 600, 0);
-
 static const DECLARE_TLV_DB_SCALE(in_pga_tlv, -1650, 3000, 0);
 
 static const DECLARE_TLV_DB_SCALE(out_mix_tlv, 0, -2100, 0);
 
 static const DECLARE_TLV_DB_SCALE(out_pga_tlv, -7300, 600, 0);
 
-static const DECLARE_TLV_DB_SCALE(out_omix_tlv, -600, 0, 0);
+// defined but not used
+//static const DECLARE_TLV_DB_SCALE(out_omix_tlv, -600, 0, 0);
+//static const DECLARE_TLV_DB_SCALE(rec_mix_tlv, -1500, 600, 0);
 
 static const DECLARE_TLV_DB_SCALE(out_dac_tlv, -7163, 0, 0);
 
@@ -529,12 +529,14 @@ static const struct snd_kcontrol_new wm8990_dapm_ainrmux_controls =
 SOC_DAPM_ENUM("Route", wm8990_ainrmux_enum);
 
 /* RXVOICE */
+/* defined but not used
 static const struct snd_kcontrol_new wm8990_dapm_rxvoice_controls[] = {
 SOC_DAPM_SINGLE_TLV("LIN4/RXN", WM8990_INPUT_MIXER5, WM8990_LR4BVOL_SHIFT,
 			WM8990_LR4BVOL_MASK, 0, in_mix_tlv),
 SOC_DAPM_SINGLE_TLV("RIN4/RXP", WM8990_INPUT_MIXER6, WM8990_RL4BVOL_SHIFT,
 			WM8990_RL4BVOL_MASK, 0, in_mix_tlv),
 };
+*/
 
 /* LOMIX */
 static const struct snd_kcontrol_new wm8990_dapm_lomix_controls[] = {

@@ -3836,14 +3836,14 @@ struct asm_session_cmdrsp_get_path_delay_v2 {
 } __packed;
 
 /* adsp_asm_session_command.h*/
-#define ASM_STREAM_CMD_OPEN_WRITE_V2       0x00010D8F
-#define ASM_STREAM_CMD_OPEN_WRITE_V3       0x00010DB3
+#define ASM_STREAM_CMD_OPEN_WRITE_V2            0x00010D8F
+#define ASM_STREAM_CMD_OPEN_WRITE_V3            0x00010DB3
 
-#define ASM_LOW_LATENCY_STREAM_SESSION				0x10000000
+#define ASM_LOW_LATENCY_STREAM_SESSION          0x10000000
 
-#define ASM_ULTRA_LOW_LATENCY_STREAM_SESSION			0x20000000
+#define ASM_ULTRA_LOW_LATENCY_STREAM_SESSION    0x20000000
 
-#define ASM_LEGACY_STREAM_SESSION                                      0
+#define ASM_LEGACY_STREAM_SESSION               0
 
 
 struct asm_stream_cmd_open_write_v3 {
@@ -3949,7 +3949,7 @@ struct asm_stream_cmd_open_write_v3 {
 
 struct asm_stream_cmd_open_read_v3 {
 	struct apr_hdr hdr;
-	u32                    mode_flags;
+	uint64_t                   mode_flags;
 /* Mode flags that indicate whether meta information per encoded
  * frame is to be provided.
  * Supported values for bit 4:

@@ -98,12 +98,14 @@ static const char *low_cutoff_text[] = {
 static const struct soc_enum low_3d =
 	SOC_ENUM_SINGLE(WM8737_3D_ENHANCE, 6, 2, low_cutoff_text);
 
+/* defined but not used
 static const char *high_cutoff_text[] = {
 	"High", "Low"
 };
 
 static const struct soc_enum high_3d =
 	SOC_ENUM_SINGLE(WM8737_3D_ENHANCE, 5, 2, high_cutoff_text);
+*/
 
 static const char *alc_fn_text[] = {
 	"Disabled", "Right", "Left", "Stereo"

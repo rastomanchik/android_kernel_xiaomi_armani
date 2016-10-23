@@ -55,8 +55,11 @@ static const struct soc_enum rec_src_enum =
 static const struct snd_kcontrol_new tlv320aic23_rec_src_mux_controls =
 SOC_DAPM_ENUM("Input Select", rec_src_enum);
 
+/* defined but not used
 static const struct soc_enum tlv320aic23_rec_src =
 	SOC_ENUM_SINGLE(TLV320AIC23_ANLG, 2, 2, rec_src_text);
+*/
+
 static const struct soc_enum tlv320aic23_deemph =
 	SOC_ENUM_SINGLE(TLV320AIC23_DIGT, 1, 4, deemph_text);
 
