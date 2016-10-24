@@ -332,7 +332,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		            -fno-delete-null-pointer-checks -Wno-logical-not-parentheses
 		        
 # for gcc-6
-KBUILD_CFLAGS   += -Wno-array-bounds
+KBUILD_CFLAGS   += -Wno-array-bounds -Wno-shift-overflow
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -878,9 +878,6 @@ endef
 vmlinux: $(vmlinux-lds) $(vmlinux-init) $(vmlinux-main) vmlinux.o $(kallsyms.o) FORCE
 ifdef CONFIG_HEADERS_CHECK
 	$(Q)$(MAKE) -f $(srctree)/Makefile headers_check
-endif
-ifdef CONFIG_SAMPLES
-	$(Q)$(MAKE) $(build)=samples
 endif
 	$(call vmlinux-modpost)
 	$(call if_changed_rule,vmlinux__)

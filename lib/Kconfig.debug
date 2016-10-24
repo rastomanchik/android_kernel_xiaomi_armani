@@ -1305,8 +1305,6 @@ config PANIC_ON_DATA_CORRUPTION
 	 recoverable data corruption scenarios to system-halting panics,
 	 for easier detection and debug.
 
-source "samples/Kconfig"
-
 source "lib/Kconfig.kgdb"
 
 source "lib/Kconfig.kmemcheck"
