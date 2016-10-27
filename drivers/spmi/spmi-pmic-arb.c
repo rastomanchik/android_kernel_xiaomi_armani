@@ -657,6 +657,7 @@ static int pmic_arb_intr_priv_data(struct spmi_controller *ctrl,
 	return 0;
 }
 
+#ifdef CONFIG_DEBUG_FS
 static int pmic_arb_mapping_data_show(struct seq_file *file, void *unused)
 {
 	struct spmi_pmic_arb_dev *pmic_arb = file->private;
@@ -687,6 +688,7 @@ static const struct file_operations pmic_arb_dfs_fops = {
 	.llseek		= seq_lseek,
 	.release	= seq_release,
 };
+#endif
 
 static int __devinit
 spmi_pmic_arb_get_property(struct platform_device *pdev, char *pname, u32 *prop)
@@ -841,13 +843,12 @@ static int __devinit spmi_pmic_arb_probe(struct platform_device *pdev)
 	/* Register device(s) from the device tree */
 	of_spmi_register_devices(&pmic_arb->controller);
 
+#ifdef CONFIG_DEBUG_FS
 	/* Add debugfs file for mapping data */
 	if (spmi_dfs_create_file(&pmic_arb->controller, "mapping",
 					pmic_arb, &pmic_arb_dfs_fops) == NULL)
 		dev_err(&pdev->dev, "error creating 'mapping' debugfs file\n");
-
-	pr_debug("PMIC Arb Version 0x%x\n",
-			pmic_arb_read(pmic_arb, PMIC_ARB_VERSION));
+#endif
 
 	the_pmic_arb = pmic_arb;
 	register_syscore_ops(&spmi_pmic_arb_syscore_ops);

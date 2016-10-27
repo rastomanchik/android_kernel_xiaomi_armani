@@ -332,7 +332,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		            -fno-delete-null-pointer-checks -Wno-logical-not-parentheses
 		        
 # for gcc-6
-KBUILD_CFLAGS   += -Wno-array-bounds -Wno-shift-overflow
+KBUILD_CFLAGS   += -Wno-array-bounds
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -1135,7 +1135,7 @@ MRPROPER_FILES += .config .config.old .version .old_version             \
 #
 clean: rm-dirs  := $(CLEAN_DIRS)
 clean: rm-files := $(CLEAN_FILES)
-clean-dirs      := $(addprefix _clean_, . $(vmlinux-alldirs) samples)
+clean-dirs      := $(addprefix _clean_, . $(vmlinux-alldirs))
 
 PHONY += $(clean-dirs) clean archclean
 $(clean-dirs):

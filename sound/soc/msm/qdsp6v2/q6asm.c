@@ -1811,7 +1811,7 @@ static int __q6asm_open_read(struct audio_client *ac,
 
 	switch (format) {
 	case FORMAT_LINEAR_PCM:
-		open.mode_flags |= 0x0;
+		open.mode_flags |= 0x00;
 		open.enc_cfg_id = ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2;
 		break;
 	case FORMAT_MPEG4_AAC:

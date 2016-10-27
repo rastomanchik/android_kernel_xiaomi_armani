@@ -3949,7 +3949,7 @@ struct asm_stream_cmd_open_write_v3 {
 
 struct asm_stream_cmd_open_read_v3 {
 	struct apr_hdr hdr;
-	uint64_t                   mode_flags;
+	u32                   mode_flags;
 /* Mode flags that indicate whether meta information per encoded
  * frame is to be provided.
  * Supported values for bit 4:
