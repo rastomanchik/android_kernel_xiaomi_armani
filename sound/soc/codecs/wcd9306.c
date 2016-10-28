@@ -193,9 +193,6 @@ static const DECLARE_TLV_DB_SCALE(line_gain, 0, 7, 1);
 static const DECLARE_TLV_DB_SCALE(analog_gain, 0, 25, 1);
 static struct snd_soc_dai_driver tapan_dai[];
 
-// defined but not used
-//static const DECLARE_TLV_DB_SCALE(aux_pga_gain, 0, 2, 0);
-
 /* Codec supports 2 IIR filters */
 enum {
 	IIR1 = 0,
@@ -514,8 +511,8 @@ static int tapan_put_anc_func(struct snd_kcontrol *kcontrol,
 		snd_soc_dapm_enable_pin(dapm, "EAR PA");
 		snd_soc_dapm_enable_pin(dapm, "EAR");
 	}
-	snd_soc_dapm_sync(dapm);
 	mutex_unlock(&dapm->codec->mutex);
+	snd_soc_dapm_sync(dapm);
 	return 0;
 }
 
@@ -6444,8 +6441,8 @@ static int tapan_codec_probe(struct snd_soc_codec *codec)
 		snd_soc_dapm_disable_pin(dapm, "ANC EAR PA");
 		snd_soc_dapm_disable_pin(dapm, "ANC EAR");
 	}
-	snd_soc_dapm_sync(dapm);
 	mutex_unlock(&dapm->codec->mutex);
+	snd_soc_dapm_sync(dapm);
 
 	codec->ignore_pmdown_time = 1;
 

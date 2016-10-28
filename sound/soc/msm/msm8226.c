@@ -1101,16 +1101,17 @@ void *def_tapan_mbhc_cal(void)
 	btn_high[1] = 330;
 	btn_low[2] = 331;
 	btn_high[2] = 655;
-	btn_low[3] = 105;
-	btn_high[3] = 148;
-	btn_low[4] = 149;
-	btn_high[4] = 189;
-	btn_low[5] = 190;
-	btn_high[5] = 228;
-	btn_low[6] = 229;
-	btn_high[6] = 269;
-	btn_low[7] = 270;
-	btn_high[7] = 500;
+	btn_low[3] = 95;
+	btn_high[3] = 133;
+	btn_low[4] = 134;
+	btn_high[4] = 171;
+	btn_low[5] = 172;
+	btn_high[5] = 208;
+	btn_low[6] = 209;
+	btn_high[6] = 244;
+	btn_low[7] = 245;
+	btn_high[7] = 930;
+
 	n_ready = wcd9xxx_mbhc_cal_btn_det_mp(btn_cfg, MBHC_BTN_DET_N_READY);
 	n_ready[0] = 80;
 	n_ready[1] = 12;
