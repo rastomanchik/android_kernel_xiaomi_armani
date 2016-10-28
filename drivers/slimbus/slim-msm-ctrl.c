@@ -91,11 +91,11 @@ enum mgr_intr {
 };
 
 enum frm_cfg {
-	FRM_ACTIVE	= 1,
-	CLK_GEAR	= 7,
-	ROOT_FREQ	= 11,
-	REF_CLK_GEAR	= 15,
-	INTR_WAKE	= 19,
+	FRM_ACTIVE      = 1,
+	CLK_GEAR        = 10,
+	ROOT_FREQ       = 31,
+	REF_CLK_GEAR    = 15,
+	INTR_WAKE       = 19,
 };
 
 static struct msm_slim_sat *msm_slim_alloc_sat(struct msm_slim_ctrl *dev);
