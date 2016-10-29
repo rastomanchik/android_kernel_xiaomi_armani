@@ -63,7 +63,7 @@ int find_vdd_level(struct clk *clk, unsigned long rate)
 /* Update voltage level given the current votes. */
 static int update_vdd(struct clk_vdd_class *vdd_class)
 {
-	int level, rc = 0, i, ignore;
+	int level, rc = 0, i;
 	struct regulator **r = vdd_class->regulator;
 	int *uv = vdd_class->vdd_uv;
 	int *ua = vdd_class->vdd_ua;
@@ -131,7 +131,7 @@ set_voltage_fail:
 		if (cur_lvl == 0 || cur_lvl == vdd_class->num_levels)
 			regulator_disable(r[i]);
 		else if (level == 0)
-			ignore = regulator_enable(r[i]);
+			regulator_enable(r[i]);
 	}
 	return rc;
 }

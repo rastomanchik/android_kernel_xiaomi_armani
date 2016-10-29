@@ -868,6 +868,8 @@ static int wm8983_set_pll(struct snd_soc_dai *dai, int pll_id,
 	snd_soc_write(codec, WM8983_PLL_N,
 		      (pll_div.div2 << WM8983_PLL_PRESCALE_SHIFT)
 		      | pll_div.n);
+	if(!pll_div.k)
+	    pll_div.k = 0;
 	/* set PLLK */
 	snd_soc_write(codec, WM8983_PLL_K_3, pll_div.k & 0x1ff);
 	snd_soc_write(codec, WM8983_PLL_K_2, (pll_div.k >> 9) & 0x1ff);

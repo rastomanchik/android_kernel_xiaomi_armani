@@ -721,11 +721,9 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
 	struct address_space *mapping;
 	struct inode *inode;
 	swp_entry_t swap;
-	pgoff_t index;
 
 	BUG_ON(!PageLocked(page));
 	mapping = page->mapping;
-	index = page->index;
 	inode = mapping->host;
 	info = SHMEM_I(inode);
 	if (info->flags & VM_LOCKED)

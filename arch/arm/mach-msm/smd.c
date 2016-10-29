@@ -2897,7 +2897,6 @@ void notify_smsm_cb_clients_worker(struct work_struct *work)
 	unsigned long flags;
 	uint64_t t_snapshot;
 	uint64_t t_start;
-	unsigned long nanosec_rem;
 
 	while (kfifo_len(&smsm_snapshot_fifo) >= SMSM_SNAPSHOT_SIZE) {
 		t_start = sched_clock();
@@ -2969,10 +2968,9 @@ void notify_smsm_cb_clients_worker(struct work_struct *work)
 		}
 
 		t_start = t_start - t_snapshot;
-		nanosec_rem = do_div(t_start, 1000000000U);
 		SMSM_POWER_INFO(
 			"SMSM snapshot queue response time %6u.%09lu s\n",
-			(unsigned)t_start, nanosec_rem);
+			(unsigned)t_start, do_div(t_start, 1000000000U));
 	}
 }
 

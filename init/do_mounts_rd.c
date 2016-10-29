@@ -55,7 +55,6 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 	struct minix_super_block *minixsb;
 	struct romfs_super_block *romfsb;
 	struct cramfs_super *cramfsb;
-	struct squashfs_super_block *squashfsb;
 	int nblocks = -1;
 	unsigned char *buf;
 	const char *compress_name;
@@ -68,7 +67,6 @@ identify_ramdisk_image(int fd, int start_block, decompress_fn *decompressor)
 	minixsb = (struct minix_super_block *) buf;
 	romfsb = (struct romfs_super_block *) buf;
 	cramfsb = (struct cramfs_super *) buf;
-	squashfsb = (struct squashfs_super_block *) buf;
 	memset(buf, 0xe5, size);
 
 	/*

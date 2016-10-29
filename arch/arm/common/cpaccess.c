@@ -221,11 +221,10 @@ static unsigned long do_cpregister_rw(int write)
 
 static int get_register_params(char *str_tmp)
 {
-	unsigned long op1, op2, crn, crm, cp = 15, write_value, il2index;
+	unsigned long op1, op2, crn, crm, cp = 15, write_value;
 	char rw;
 	int cnt = 0;
 
-	il2index = 0;
 	strncpy(type, strsep(&str_tmp, ":"), TYPE_MAX_CHARACTERS);
 
 	if (strncasecmp(type, "C", TYPE_MAX_CHARACTERS) == 0) {
