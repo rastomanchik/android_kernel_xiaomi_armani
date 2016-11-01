@@ -283,11 +283,8 @@ int32_t msm_camera_qup_i2c_write_table(struct msm_camera_i2c_client *client,
 	client->addr_type = write_setting->addr_type;
 
 	for (i = 0; i < write_setting->size; i++) {
-		CDBG("%s addr %x data %x\n", __func__,
-			reg_setting->reg_addr, reg_setting->reg_data);
-
 		rc = msm_camera_qup_i2c_write(client, reg_setting->reg_addr,
-			reg_setting->reg_data, write_setting->data_type);
+		        reg_setting->reg_data, write_setting->data_type);
 		if (rc < 0)
 			break;
 		reg_setting++;

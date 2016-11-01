@@ -194,7 +194,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
 HOSTCXXFLAGS = -O2
 
 # Decide whether to build built-in, modular, or both.
@@ -324,12 +324,13 @@ LINUXINCLUDE    := -I$(srctree)/arch/$(hdr-arch)/include \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+KBUILD_CFLAGS   := -Wall -Wunused -Wundef -Wstrict-prototypes \
 		            -fno-strict-aliasing -fno-common \
 		            -Werror-implicit-function-declaration \
 		            -Wno-format-security -Wno-discarded-qualifiers \
 		            -Wno-discarded-array-qualifiers -Wno-bool-compare \
-		            -fno-delete-null-pointer-checks -Wno-logical-not-parentheses
+		            -fno-delete-null-pointer-checks -Wno-logical-not-parentheses \
+		            -std=gnu89
 		        
 # for gcc-6
 KBUILD_CFLAGS   += -Wno-array-bounds
@@ -535,10 +536,6 @@ ifneq ($(CONFIG_FRAME_WARN),0)
 KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
 endif
 
-# Force gcc to behave correct even for buggy distributions
-ifndef CONFIG_CC_STACKPROTECTOR
-KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
-endif
 
 # This warning generated too much noise in a regular build.
 # Use make W=1 to enable this warning (see scripts/Makefile.build)

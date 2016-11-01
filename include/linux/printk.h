@@ -85,7 +85,7 @@ struct va_format {
 static inline __printf(1, 2)
 int no_printk(const char *fmt, ...)
 {
-	return 0;
+	return fmt ? 0 : 0;
 }
 
 extern asmlinkage __printf(1, 2)

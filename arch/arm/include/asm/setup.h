@@ -146,15 +146,15 @@ struct tag_memclk {
 struct tag {
 	struct tag_header hdr;
 	union {
-		struct tag_core		core;
-		struct tag_mem32	mem;
-		struct tag_videotext	videotext;
-		struct tag_ramdisk	ramdisk;
-		struct tag_initrd	initrd;
-		struct tag_serialnr	serialnr;
-		struct tag_revision	revision;
-		struct tag_videolfb	videolfb;
-		struct tag_cmdline	cmdline;
+		struct tag_core         core;
+		struct tag_mem32        mem;
+		struct tag_videotext    videotext;
+		struct tag_ramdisk      ramdisk;
+		struct tag_initrd       initrd;
+		struct tag_serialnr     serialnr;
+		struct tag_revision     revision;
+		struct tag_videolfb     videolfb;
+		struct tag_cmdline      cmdline;
 
 		/*
 		 * Acorn specific

@@ -94,7 +94,7 @@ do {								\
 
 #else
 
-static inline int ddebug_remove_module(const char *mod)
+static inline int ddebug_remove_module(void)
 {
 	return 0;
 }

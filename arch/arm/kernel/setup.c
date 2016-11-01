@@ -812,7 +812,7 @@ static struct init_tags {
 	{ tag_size(tag_core), ATAG_CORE },
 	{ 1, PAGE_SIZE, 0xff },
 	{ tag_size(tag_mem32), ATAG_MEM },
-	{ MEM_SIZE },
+	{ MEM_SIZE, 0x0 },
 	{ 0, ATAG_NONE }
 };
 
