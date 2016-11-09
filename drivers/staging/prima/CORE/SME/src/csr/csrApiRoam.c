@@ -16484,7 +16484,7 @@ eHalStatus csrRoamOffloadScan(tpAniSirGlobal pMac, tANI_U8 command, tANI_U8 reas
    vos_msg_t msg;
    tSirRoamOffloadScanReq *pRequestBuf;
    tpCsrNeighborRoamControlInfo    pNeighborRoamInfo = &pMac->roam.neighborRoamInfo;
-   tCsrRoamSession *pSession;
+   tCsrRoamSession *pSession = NULL;
    tANI_U8 i,j,num_channels = 0, ucDot11Mode;
    tANI_U8 *ChannelList = NULL;
    tANI_U32 sessionId = 0;

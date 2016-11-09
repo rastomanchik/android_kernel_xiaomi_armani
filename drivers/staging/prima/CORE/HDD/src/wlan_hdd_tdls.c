@@ -47,7 +47,6 @@
 #include "sme_Api.h"
 #include "vos_sched.h"
 
-static tANI_S32 wlan_hdd_get_tdls_discovery_peer_cnt(tdlsCtx_t *pHddTdlsCtx);
 static tANI_S32 wlan_hdd_tdls_peer_reset_discovery_processed(tdlsCtx_t *pHddTdlsCtx);
 static void wlan_hdd_tdls_timers_destroy(tdlsCtx_t *pHddTdlsCtx);
 static void wlan_hdd_tdls_peer_timers_destroy(tdlsCtx_t *pHddTdlsCtx);
@@ -191,46 +190,6 @@ done:
 void hdd_tdls_notify_mode_change(hdd_adapter_t *adapter, hdd_context_t *hddctx)
 {
         wlan_hdd_tdls_disable_offchan_and_teardown_links(hddctx);
-}
-
-static v_VOID_t wlan_hdd_tdls_start_peer_discover_timer(tdlsCtx_t *pHddTdlsCtx,
-                                                        tANI_BOOLEAN mutexLock,
-                                                        v_U32_t discoveryExpiry)
-{
-    hdd_station_ctx_t *pHddStaCtx;
-    hdd_context_t *pHddCtx;
-
-    ENTER();
-
-    if ((NULL == pHddTdlsCtx) || (NULL == pHddTdlsCtx->pAdapter) )
-    {
-        VOS_TRACE(VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_ERROR,
-               FL(" pHddTdlsCtx or pAdapter points to NULL"));
-        return;
-    }
-
-    pHddCtx = WLAN_HDD_GET_CTX( pHddTdlsCtx->pAdapter );
-
-    if(0 != (wlan_hdd_validate_context(pHddCtx)))
-    {
-        return;
-    }
-
-    if ( mutexLock )
-    {
-       mutex_lock(&pHddCtx->tdls_lock);
-    }
-
-    pHddStaCtx = WLAN_HDD_GET_STATION_CTX_PTR(pHddTdlsCtx->pAdapter);
-
-    VOS_TRACE( VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_INFO, "beacon rssi: %d",
-               pHddTdlsCtx->ap_rssi);
-
-    if ( mutexLock )
-        mutex_unlock(&pHddCtx->tdls_lock);
-
-    EXIT();
-    return;
 }
 
 #ifdef TDLS_USE_SEPARATE_DISCOVERY_TIMER
@@ -2123,31 +2082,6 @@ static tANI_S32 wlan_hdd_tdls_peer_reset_discovery_processed(tdlsCtx_t *pHddTdls
     }
 
     return 0;
-}
-
-static tANI_S32 wlan_hdd_get_tdls_discovery_peer_cnt(tdlsCtx_t *pHddTdlsCtx)
-{
-    int i;
-    struct list_head *head;
-    struct list_head *pos, *q;
-    int discovery_peer_cnt=0;
-    hddTdlsPeer_t *tmp;
-
-    /*
-     * This function expects the callers to acquire the Mutex.
-     */
-
-    for (i = 0; i < 256; i++) {
-        head = &pHddTdlsCtx->peer_list[i];
-        list_for_each_safe (pos, q, head) {
-            tmp = list_entry(pos, hddTdlsPeer_t, node);
-            VOS_TRACE(VOS_MODULE_ID_HDD, VOS_TRACE_LEVEL_INFO,
-                      "%s, %d, " MAC_ADDRESS_STR, __func__, i,
-                      MAC_ADDR_ARRAY(tmp->peerMac));
-            discovery_peer_cnt++;
-        }
-    }
-    return discovery_peer_cnt;
 }
 
 tANI_U16 wlan_hdd_tdlsConnectedPeers(hdd_adapter_t *pAdapter)

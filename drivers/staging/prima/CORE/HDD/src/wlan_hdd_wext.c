@@ -5365,7 +5365,7 @@ static int __iw_setint_getnone(struct net_device *dev,
                                union iwreq_data *wrqu, char *extra)
 {
     hdd_adapter_t *pAdapter;
-    tHalHandle hHal;
+    tHalHandle hHal = NULL;
     hdd_wext_state_t  *pWextState;
     hdd_context_t *pHddCtx;
     hdd_mon_ctx_t *pMonCtx = NULL;
@@ -7296,7 +7296,7 @@ static int __iw_set_var_ints_getnone(struct net_device *dev,
                                      union iwreq_data *wrqu, char *extra)
 {
     hdd_adapter_t *pAdapter;
-    tHalHandle hHal;
+    tHalHandle hHal = NULL;
     int sub_cmd;
     int *apps_args = (int *) extra;
     hdd_station_ctx_t *pStaCtx = NULL ;

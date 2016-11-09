@@ -3,13 +3,10 @@
 echo "****Очистка старых конфигов****"
 export ARCH=arm
 
-#export CROSS_COMPILE=~/cm13/prebuilts/gcc/linux-x86/arm/arm-cortex-linux-gnueabi-linaro_5.2/bin/arm-cortex-linux-gnueabi-
-#export EABI_PATCH=~/cm13/prebuilts/gcc/linux-x86/arm/arm-cortex-linux-gnueabi-linaro_5.2/bin
-
 export CROSS_COMPILE=/usr/bin/arm-none-eabi-
 export EABI_PATCH=~/usr/bin
 
-#make clean && make mrproper
+make clean && make mrproper
 
 echo "****Сборка ядра****"
 make cyanogenmod_armani_defconfig

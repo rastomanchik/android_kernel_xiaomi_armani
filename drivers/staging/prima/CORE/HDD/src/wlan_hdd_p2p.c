@@ -132,42 +132,6 @@ static void hdd_sendMgmtFrameOverMonitorIface( hdd_adapter_t *pMonAdapter,
                                                tANI_U8* pbFrames,
                                                tANI_U8 frameType );
 
-static v_BOOL_t hdd_p2p_is_action_type_rsp( const u8 *buf )
-{
-    tActionFrmType actionFrmType;
-    const u8 *ouiPtr;
-
-    if ( buf[WLAN_HDD_PUBLIC_ACTION_FRAME_CATEGORY_OFFSET] !=
-               WLAN_HDD_PUBLIC_ACTION_FRAME ) {
-        return VOS_FALSE;
-    }
-
-    if ( buf[WLAN_HDD_PUBLIC_ACTION_FRAME_ACTION_OFFSET] !=
-               WLAN_HDD_VENDOR_SPECIFIC_ACTION ) {
-        return VOS_FALSE;
-    }
-
-    ouiPtr = &buf[WLAN_HDD_PUBLIC_ACTION_FRAME_OUI_OFFSET];
-
-    if ( WPA_GET_BE24(ouiPtr) != WLAN_HDD_WFA_OUI ) {
-        return VOS_FALSE;
-    }
-
-    if ( buf[WLAN_HDD_PUBLIC_ACTION_FRAME_OUI_TYPE_OFFSET] !=
-               WLAN_HDD_WFA_P2P_OUI_TYPE ) {
-        return VOS_FALSE;
-    }
-
-    actionFrmType = buf[WLAN_HDD_PUBLIC_ACTION_FRAME_SUB_TYPE_OFFSET];
-    if ( actionFrmType != WLAN_HDD_INVITATION_REQ &&
-        actionFrmType != WLAN_HDD_GO_NEG_REQ &&
-        actionFrmType != WLAN_HDD_DEV_DIS_REQ &&
-        actionFrmType != WLAN_HDD_PROV_DIS_REQ )
-        return VOS_TRUE;
-    else
-        return VOS_FALSE;
-}
-
 eHalStatus wlan_hdd_remain_on_channel_callback( tHalHandle hHal, void* pCtx,
                                                 eHalStatus status )
 {

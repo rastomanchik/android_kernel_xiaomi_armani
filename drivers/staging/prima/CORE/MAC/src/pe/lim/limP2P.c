@@ -972,7 +972,7 @@ void limSendP2PActionFrame(tpAniSirGlobal pMac, tpSirMsgQ pMsg)
     v_U8_t              *pNewP2PIe = NULL;
     v_U16_t             remainLen = 0;
 #ifdef WLAN_FEATURE_11W
-    tpSirMacMgmtHdr        pMacHdr;
+    tpSirMacMgmtHdr        pMacHdr = NULL;
     tpSirMacActionFrameHdr pActionHdr;
 #endif
     nBytes = pMbMsg->msgLen - sizeof(tSirMbMsg);
