@@ -168,6 +168,7 @@ int32_t msm_camera_cci_i2c_write_seq(struct msm_camera_i2c_client *client,
  		(sizeof(struct msm_camera_i2c_reg_array)), GFP_KERNEL);
  	if (!reg_conf_tbl) {
  		pr_err("%s:%d no memory\n", __func__, __LINE__);
+		num_byte = I2C_SEQ_REG_DATA_MAX;
  		return -ENOMEM;
  	}
 

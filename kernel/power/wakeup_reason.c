@@ -28,6 +28,7 @@
 #include <linux/suspend.h>
 #include <linux/slab.h>
 
+#define MAX_WAKEUP_REASON_IRQS 32
 static bool suspend_abort;
 static char abort_reason[MAX_SUSPEND_ABORT_LEN];
 
