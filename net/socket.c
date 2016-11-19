@@ -2363,7 +2363,7 @@ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 	if (datagrams == 0) {
 		datagrams = err;
 		goto out_put;
- 		}
+ 	}
  
 	if (err != -EAGAIN) {
 		sock->sk->sk_err = -err;
